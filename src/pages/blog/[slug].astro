@@ -1,0 +1,75 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content'; // Import CollectionEntry, remove getEntryBySlug and CollectionKey
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import { SITE_TITLE } from '../../consts'; // Assuming SITE_TITLE is relevant
+
+// 1. Generate a path for each markdown file in src/content/blog
+export async function getStaticPaths() {
+  const blogEntries = await getCollection('blog');
+  return blogEntries.map((entry: CollectionEntry<'blog'>) => ({ // Add type hint for entry
+    // @ts-ignore - TS type inference seems incorrect here, entry.slug exists at runtime
+    params: { slug: entry.slug },
+    props: { entry }, // Pass the full entry object as props
+  }));
+}
+
+// 2. Get the entry from props passed by getStaticPaths
+const { entry } = Astro.props as { entry: CollectionEntry<'blog'> }; // Type assertion for props
+
+// Astro handles 404s automatically based on getStaticPaths results
+// No need for explicit getEntryBySlug or 404 check here
+
+// 5. Render the content
+// @ts-ignore - TS type inference seems incorrect here, entry.render exists at runtime
+const { Content } = await entry.render();
+
+// Capitalize the page slug for the breadcrumb label if title is missing (fallback)
+const pageTitle = entry.data.title ||
+  // @ts-ignore - TS type inference seems incorrect here, entry.slug exists at runtime
+  entry.slug.charAt(0).toUpperCase() + entry.slug.slice(1); // Use entry.slug here
+
+const breadcrumbItems = [
+  { label: "Home", href: "/" },
+  { label: "Blog", href: "/blog" },
+  // @ts-ignore - TS type inference seems incorrect here, entry.slug exists at runtime
+  { label: pageTitle, href: `/blog/${entry.slug}` }, // Use entry.slug here
+];
+
+const pageDescription = entry.data.description || `Read the post: ${pageTitle}`;
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <BaseHead title={`${pageTitle} | ${SITE_TITLE}`} description={pageDescription} />
+  <style is:global>
+    /* Include styles needed specifically for prose rendering if not covered globally */
+    /* For example, styles for the anchor links if we were adding them */
+    .prose .anchor-link {
+      /* Styles for autolink headings if they were enabled */
+    }
+    .prose .heading-link-icon {
+       /* Styles for autolink headings icon if they were enabled */
+    }
+  </style>
+</head>
+<body>
+  <div class="container mx-auto px-4">
+    <Header />
+    <div class="mx-auto mt-8 max-w-3xl">
+      <Breadcrumb items={breadcrumbItems} />
+      <article class="relative mt-8">
+        <h1 class="mb-8 text-3xl font-bold">{pageTitle}</h1>
+        {/* Apply Tailwind Typography plugin styles for readable markdown rendering */}
+        {/* Astro's default markdown rendering includes rehypeSlug and GFM */}
+        <div class="prose dark:prose-invert lg:prose-lg prose-headings:scroll-mt-20 prose-a:text-primary hover:prose-a:text-primary/80 max-w-none">
+          <Content />
+        </div>
+      </article>
+    </div>
+    <Footer />
+  </div>
+</body>
+</html>

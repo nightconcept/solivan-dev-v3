@@ -1,7 +1,7 @@
 ---
 // src/components/BlogPostList.astro
-import type { CollectionEntry } from 'astro:content'; // Assuming posts come from content collections
-import FormattedDate from './FormattedDate.astro'; // Assuming a date formatting component exists
+import type { CollectionEntry } from "astro:content"; // Assuming posts come from content collections
+import FormattedDate from "./FormattedDate.astro"; // Assuming a date formatting component exists
 
 // Define the expected shape of a post based on the React component's usage
 // Define the expected shape of a post based on the React component's usage
@@ -47,8 +47,8 @@ const hasMorePosts = totalPosts > postsPerPage && currentPosts.length > 0; // Ch
 
 // Helper function to generate correct pagination URLs
 const getPageUrl = (pageNum: number): string => {
-  if (pageNum <= 0) return '/blog'; // Safety check
-  if (pageNum === 1) return '/blog'; // Link to base blog page for page 1
+  if (pageNum <= 0) return "/blog"; // Safety check
+  if (pageNum === 1) return "/blog"; // Link to base blog page for page 1
   return `/blog?page=${pageNum}`; // Use query param for other pages
 };
 ---

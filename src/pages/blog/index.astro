@@ -1,111 +1,60 @@
 ---
-import BaseHead from "../../components/BaseHead.astro";
-import Header from "../../components/Header.astro";
-import Footer from "../../components/Footer.astro";
-import { SITE_TITLE, SITE_DESCRIPTION } from "../../consts";
+// src/pages/blog/index.astro
 import { getCollection } from "astro:content";
-import FormattedDate from "../../components/FormattedDate.astro";
+// Removed BaseLayout import as src/layouts is empty
+import Header from "../../components/Header.astro"; // Use relative path
+import Footer from "../../components/Footer.astro"; // Use relative path
+import BlogPostList from "../../components/BlogPostList.astro"; // Use relative path
+// Removed unused Post type import
 
-const posts = (await getCollection("blog")).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
+// Fetch all blog posts
+const allPostsRaw = await getCollection("blog");
+
+// Map posts to the structure expected by BlogPostList
+// Ensure slug is top-level, using frontmatter slug or falling back to id
+// Also filter drafts here, although BlogPostList also filters. Filtering early might be slightly more efficient.
+const allPosts = allPostsRaw // Type is inferred
+  .filter(post => post.data.draft !== true) // Pre-filter drafts
+  .map((post) => ({
+    slug: post.data.slug || post.id, // Use frontmatter slug or Astro's generated id as slug
+    title: post.data.title,
+    description: post.data.description,
+    date: post.data.date, // Use the 'date' field from the schema
+    author: post.data.author,
+    draft: post.data.draft,
+    // Add any other fields from the schema if BlogPostList needs them later
+  }))
+  .sort((a, b) => b.date.valueOf() - a.date.valueOf()); // Sort posts by date descending
+
+// Get current page from URL query parameters, default to 1
+const pageParam = Astro.url.searchParams.get("page");
+const currentPage = parseInt(pageParam || "1", 10);
+const validPage = Number.isNaN(currentPage) || currentPage < 1 ? 1 : currentPage;
+
+// Define page metadata (adjust title as needed)
+const pageTitle = "Blog Posts";
+const pageDescription = "Read the latest articles from the blog."; // Add a suitable description
+
 ---
 
-<!doctype html>
+<!doctype html> <!-- Add basic HTML structure since layout was removed -->
 <html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-		<style>
-			main {
-				width: 960px;
-			}
-			ul {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 2rem;
-				list-style-type: none;
-				margin: 0;
-				padding: 0;
-			}
-			ul li {
-				width: calc(50% - 1rem);
-			}
-			ul li * {
-				text-decoration: none;
-				transition: 0.2s ease;
-			}
-			ul li:first-child {
-				width: 100%;
-				margin-bottom: 1rem;
-				text-align: center;
-			}
-			ul li:first-child img {
-				width: 100%;
-			}
-			ul li:first-child .title {
-				font-size: 2.369rem;
-			}
-			ul li img {
-				margin-bottom: 0.5rem;
-				border-radius: 12px;
-			}
-			ul li a {
-				display: block;
-			}
-			.title {
-				margin: 0;
-				color: rgb(var(--black));
-				line-height: 1;
-			}
-			.date {
-				margin: 0;
-				color: rgb(var(--gray));
-			}
-			ul li a:hover h4,
-			ul li a:hover .date {
-				color: rgb(var(--accent));
-			}
-			ul a:hover img {
-				box-shadow: var(--box-shadow);
-			}
-			@media (max-width: 720px) {
-				ul {
-					gap: 0.5em;
-				}
-				ul li {
-					width: 100%;
-					text-align: center;
-				}
-				ul li:first-child {
-					margin-bottom: 0;
-				}
-				ul li:first-child .title {
-					font-size: 1.563em;
-				}
-			}
-		</style>
-	</head>
-	<body>
-		<Header />
-		<main>
-			<section>
-				<ul>
-					{
-						posts.map((post) => (
-							<li>
-								<a href={`/blog/${post.id}/`}>
-									<img width={720} height={360} src={post.data.heroImage} alt="" />
-									<h4 class="title">{post.data.title}</h4>
-									<p class="date">
-										<FormattedDate date={post.data.pubDate} />
-									</p>
-								</a>
-							</li>
-						))
-					}
-				</ul>
-			</section>
-		</main>
-		<Footer />
-	</body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{pageTitle}</title>
+  <meta name="description" content={pageDescription}>
+  {/* Basic styling link - might need adjustment based on project setup */}
+  <link rel="stylesheet" href="/src/styles/global.css">
+</head>
+<body>
+  <div class="container mx-auto px-4"> {/* Match container from page.tsx */}
+    <Header />
+    <main class="mx-auto mt-8 max-w-3xl"> {/* Match max-width from page.tsx */}
+      <h1 class="mb-8 text-3xl font-bold">{pageTitle}</h1> {/* Match h1 from page.tsx */}
+      <BlogPostList posts={allPosts} page={validPage} /> {/* Pass mapped posts and page */}
+    </main>
+    <Footer />
+  </div>
+</body>
 </html>

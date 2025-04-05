@@ -1,20 +1,20 @@
 ---
 // Imports for components and content
-import Header from '../components/Header.astro';
-import ProfileCard from '../components/ProfileCard.astro';
-import BlogPostList from '../components/BlogPostList.astro';
-import Footer from '../components/Footer.astro';
-import ThemeToggle from '../components/ThemeToggle.astro'; // Theme toggle component
-import { getCollection } from 'astro:content';
-import { SITE_TITLE, SITE_DESCRIPTION } from '../consts'; // Site constants
+import Header from "../components/Header.astro";
+import ProfileCard from "../components/ProfileCard.astro";
+import BlogPostList from "../components/BlogPostList.astro";
+import Footer from "../components/Footer.astro";
+import ThemeToggle from "../components/ThemeToggle.astro"; // Theme toggle component
+import { getCollection } from "astro:content";
+import { SITE_TITLE, SITE_DESCRIPTION } from "../consts"; // Site constants
 
 // Fetch blog posts from the 'blog' collection
-const allPostsRaw = await getCollection('blog');
+const allPostsRaw = await getCollection("blog");
 
 // Filter posts to ensure they have a valid publication date and map to the structure expected by BlogPostList
 const validPosts = allPostsRaw
-  .filter(post => post.data.date instanceof Date) // Ensure date is a valid Date
-  .map(post => ({
+  .filter((post) => post.data.date instanceof Date) // Ensure date is a valid Date
+  .map((post) => ({
     slug: post.id, // Use post.id for the slug (assuming this is correct)
     // Ensure properties match the 'Post' type expected by BlogPostList
     title: post.data.title,
@@ -23,7 +23,7 @@ const validPosts = allPostsRaw
     author: post.data.author, // Pass author if needed by BlogPostList (check component props)
     draft: post.data.draft, // Pass draft status
     // Add any other properties from the schema if BlogPostList expects them
-}));
+  }));
 
 // Note: Sorting is now handled within BlogPostList.astro
 // We pass the filtered and mapped 'validPosts' directly.
