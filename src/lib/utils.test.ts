@@ -175,7 +175,7 @@ describe('Utils', () => {
 
     it('should map posts to the correct structure', async () => {
       (getCollection as Mock).mockResolvedValue([
-        { id: 'post1', data: { title: 'Post 1', description: 'Desc 1', date: new Date(2023, 10, 20), author: 'Author 1', draft: false }, body: 'body1' },
+        { id: 'post1', slug: 'post1', data: { title: 'Post 1', description: 'Desc 1', date: new Date(2023, 10, 20), author: 'Author 1', draft: false }, body: 'body1' },
       ]);
       const posts = await getValidBlogPosts();
       expect(posts.length).toBe(1);
