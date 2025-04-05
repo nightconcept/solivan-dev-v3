@@ -3,6 +3,7 @@ import type { CollectionEntry } from "astro:content"; // Keep type import if nee
 import BaseLayout from "../../layouts/BaseLayout.astro"; // Import BaseLayout
 import Breadcrumb from "../../components/Breadcrumb.astro";
 import { SITE_TITLE } from "../../consts";
+import BlogPost from "../../components/BlogPost.astro"; // Import the new component
 import { getValidBlogPosts } from "../../lib/utils"; // Import the utility function
 
 // 1. Generate a path for each markdown file in src/content/blog
@@ -60,11 +61,5 @@ const pageDescription = entry.data.description || `Read the post: ${pageTitle}`;
   </style>
 
   <Breadcrumb items={breadcrumbItems} />
-  <article class="relative mt-8">
-    <h1 class="mb-8 text-3xl font-bold">{pageTitle}</h1>
-    {/* Apply Tailwind Typography plugin styles */}
-    <div class="prose dark:prose-invert lg:prose-lg prose-headings:scroll-mt-20 prose-a:text-primary hover:prose-a:text-primary/80 max-w-none">
-      <Content />
-    </div>
-  </article>
+  <BlogPost pageTitle={pageTitle} Content={Content} />
 </BaseLayout>
