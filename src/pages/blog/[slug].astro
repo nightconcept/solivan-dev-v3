@@ -8,7 +8,8 @@ import { getValidBlogPosts } from "../../lib/utils"; // Import the utility funct
 // 1. Generate a path for each markdown file in src/content/blog
 export async function getStaticPaths() {
   const validBlogPosts = await getValidBlogPosts(); // Use the utility function
-  return validBlogPosts.map((entry) => { // Map over the valid posts
+  return validBlogPosts.map((entry) => {
+    // Map over the valid posts
     // Logging can be kept if useful, but ensure it uses the correct fields from getValidBlogPosts
     // console.log(`Processing entry: Slug=${entry.slug}`);
     // No need to check for missing slug if getValidBlogPosts guarantees it
@@ -24,26 +25,24 @@ export async function getStaticPaths() {
 const { slug } = Astro.params;
 
 // Add a check to ensure slug is defined (should always be true due to getStaticPaths)
-if (typeof slug !== 'string') {
+if (typeof slug !== "string") {
   throw new Error(`Expected slug to be a string, but received: ${slug}`);
 }
 
 // 3. Fetch the full blog entry using the slug
 import { getEntry } from "astro:content";
-const entry = await getEntry('blog', slug) as CollectionEntry<'blog'>; // Fetch and assert type
+const entry = (await getEntry("blog", slug)) as CollectionEntry<"blog">; // Fetch and assert type
 
 // 4. Handle cases where the entry wasn't found (though getStaticPaths should prevent this)
 if (!entry) {
-  return new Response(null, { status: 404, statusText: 'Not Found' });
+  return new Response(null, { status: 404, statusText: "Not Found" });
 }
 
 // 5. Render the content using the fetched entry
 const { Content } = await entry.render();
 
 // Capitalize the page slug for the breadcrumb label if title is missing (fallback)
-const pageTitle =
-  entry.data.title ||
-  slug.charAt(0).toUpperCase() + slug.slice(1); // Use slug from params (already checked)
+const pageTitle = entry.data.title || slug.charAt(0).toUpperCase() + slug.slice(1); // Use slug from params (already checked)
 
 const breadcrumbItems = [
   { label: "Home", href: "/" },
