@@ -3,7 +3,13 @@ import SocialLinks from "./SocialLinks.astro";
 const today = new Date();
 ---
 
-<footer class="max-w-3xl mx-auto flex items-center justify-between py-8 pb-24 text-gray-500">
-	&copy; 2007-{today.getFullYear()} Danny Solivan. All rights reserved.
-  <SocialLinks spacing="compact" />
+<footer class="mt-12 py-6">
+  <div class="border-border mx-auto max-w-3xl border-t px-4 pt-6">
+    <div class="flex items-center justify-between">
+      <p class="text-muted-foreground text-sm">
+        &copy; Danny 2007-2025
+      </p>
+      <SocialLinks spacing="compact" />
+    </div>
+  </div>
 </footer>
