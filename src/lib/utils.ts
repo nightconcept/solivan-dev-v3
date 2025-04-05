@@ -148,7 +148,7 @@ export async function getValidBlogPosts(limit?: number): Promise<Array<ValidPost
       }
 
       return {
-        slug: post.id, // Use post.id as the source for the slug
+        slug: post.slug, // Use post.slug (derived from filename or frontmatter)
         title: post.data.title ?? "Untitled Post", // Provide default
         description: post.data.description ?? "", // Provide default for description
         date: post.data.date, // Already validated by filter
