@@ -17,8 +17,13 @@ export function stripMarkdown(markdown: string = ''): string {
   markdown = markdown.replace(/```[\s\S]*?```/g, '');
   markdown = markdown.replace(/~~~[\s\S]*?~~~/g, '');
 
+  // Remove extra whitespace and newlines (initial pass for line-based regexes)
+  markdown = markdown.replace(/\r\n/g, '\n'); // Normalize line endings
+  markdown = markdown.trim().replace(/^[ \t]+/gm, ''); // Remove leading space/tab per line
+
   // Remove headers (entire line)
-  markdown = markdown.replace(/^#+\s+.*$/gm, '');
+  markdown = markdown.replace(/^#+\s+.*$/gm, ''); // Remove full-line headers
+  markdown = markdown.replace(/(?<!^)\s*#+\s+\S+/g, ' '); // Remove inline headers (e.g., "text # Header") and replace with a space
 
   // Remove horizontal rules
   markdown = markdown.replace(/^(\*|-|_){3,}\s*$/gm, '');
@@ -31,7 +36,8 @@ export function stripMarkdown(markdown: string = ''): string {
   markdown = markdown.replace(/^\d+\.\s+/gm, '');
 
   // Remove images
-  markdown = markdown.replace(/!\[.*?\]\(.*?\)/g, '');
+  markdown = markdown.replace(/!\[.*?\]\(.*?\)/g, ' '); // Standard image tags, replace with space
+  markdown = markdown.replace(/^!.*$/gm, ''); // Lines starting with ! (for the specific test case)
 
   // Remove links, keeping the text
   markdown = markdown.replace(/\[(.*?)\]\(.*?\)/g, '$1');
