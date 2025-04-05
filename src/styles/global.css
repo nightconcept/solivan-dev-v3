@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+@config "../../tailwind.config.ts";
+
+
 @layer base {
   *,
   ::after,
@@ -10,85 +13,199 @@
   }
 }
 
-@utility text-balance {
-  text-wrap: balance;
-}
+@layer base {
+  :root {
+    /* Material Design 3 Color System - Light Theme */
 
-@layer utilities {
-  body {
-    font-family: Arial, Helvetica, sans-serif;
+    /* Primary */
+    --primary-light: 0 0% 10%;
+    --on-primary-light: 0 0% 100%;
+    --primary-container-light: 0 0% 90%;
+    --on-primary-container-light: 0 0% 10%;
+
+    /* Secondary */
+    --secondary-light: 0 0% 25%;
+    --on-secondary-light: 0 0% 100%;
+    --secondary-container-light: 0 0% 90%;
+    --on-secondary-container-light: 0 0% 10%;
+
+    /* Surface */
+    --surface-light: 0 0% 100%;
+    --on-surface-light: 0 0% 10%;
+    --surface-variant-light: 0 0% 95%;
+    --on-surface-variant-light: 0 0% 30%;
+
+    /* Background */
+    --background-light: 0 0% 98%;
+    --on-background-light: 0 0% 10%;
+
+    /* Error */
+    --error-light: 0 84% 60%;
+    --on-error-light: 0 0% 100%;
+
+    /* Outline */
+    --outline-light: 0 0% 80%;
+
+    /* Material Design 3 Color System - Dark Theme */
+
+    /* Primary */
+    --primary-dark: 0 0% 90%;
+    --on-primary-dark: 0 0% 10%;
+    --primary-container-dark: 0 0% 25%;
+    --on-primary-container-dark: 0 0% 90%;
+
+    /* Secondary */
+    --secondary-dark: 0 0% 80%;
+    --on-secondary-dark: 0 0% 10%;
+    --secondary-container-dark: 0 0% 30%;
+    --on-secondary-container-dark: 0 0% 90%;
+
+    /* Surface */
+    --surface-dark: 0 0% 15%;
+    --on-surface-dark: 0 0% 95%;
+    --surface-variant-dark: 0 0% 20%;
+    --on-surface-variant-dark: 0 0% 80%;
+
+    /* Background */
+    --background-dark: 0 0% 10%;
+    --on-background-dark: 0 0% 95%;
+
+    /* Error */
+    --error-dark: 0 84% 60%;
+    --on-error-dark: 0 0% 100%;
+
+    /* Outline */
+    --outline-dark: 0 0% 40%;
+
+    /* Legacy variables mapped to new system */
+    --background: var(--background-light);
+    --foreground: var(--on-background-light);
+
+    --card: var(--surface-light);
+    --card-foreground: var(--on-surface-light);
+
+    --popover: var(--surface-light);
+    --popover-foreground: var(--on-surface-light);
+
+    --primary: var(--primary-light);
+    --primary-foreground: var(--on-primary-light);
+
+    --secondary: var(--secondary-container-light);
+    --secondary-foreground: var(--on-secondary-container-light);
+
+    --muted: var(--surface-variant-light);
+    --muted-foreground: var(--on-surface-variant-light);
+
+    --accent: var(--secondary-container-light);
+    --accent-foreground: var(--on-secondary-container-light);
+
+    --destructive: var(--error-light);
+    --destructive-foreground: var(--on-error-light);
+
+    --border: var(--outline-light);
+    --input: var(--outline-light);
+    --ring: var(--primary-light);
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* Legacy variables mapped to new system */
+    --background: var(--background-dark);
+    --foreground: var(--on-background-dark);
+
+    --card: var(--surface-dark);
+    --card-foreground: var(--on-surface-dark);
+
+    --popover: var(--surface-dark);
+    --popover-foreground: var(--on-surface-dark);
+
+    --primary: var(--primary-dark);
+    --primary-foreground: var(--on-primary-dark);
+
+    --secondary: var(--secondary-container-dark);
+    --secondary-foreground: var(--on-secondary-container-dark);
+
+    --muted: var(--surface-variant-dark);
+    --muted-foreground: var(--on-surface-variant-dark);
+
+    --accent: var(--secondary-container-dark);
+    --accent-foreground: var(--on-secondary-container-dark);
+
+    --destructive: var(--error-dark);
+    --destructive-foreground: var(--on-error-dark);
+
+    --border: var(--outline-dark);
+    --input: var(--outline-dark);
+    --ring: var(--primary-dark);
   }
 }
 
 @layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --radius: 0.5rem;
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+  * {
+    @apply border-border;
   }
-  .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Add smooth scrolling for anchor links */
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem; /* Add padding for sticky header */
+  }
+
+  /* Monospace font for code */
+  code,
+  pre {
+    font-family:
+      "JetBrains Mono",
+      Menlo,
+      Monaco,
+      Consolas,
+      "Liberation Mono",
+      "Courier New",
+      monospace;
+    font-feature-settings: "liga" 1, "calt" 1; /* Enable ligatures */
   }
 }
 
+/* Custom prose styles for blog content */
+.prose a {
+  @apply text-[#7aa2f7] underline decoration-[#7aa2f7]/30 hover:text-[#7dcfff]
+    hover:decoration-[#7dcfff];
+  transition: color 0.2s, text-decoration-color 0.2s;
+}
+
+.prose h2 {
+  @apply mt-8 mb-4 scroll-mt-20 text-2xl font-bold;
+}
+
+.prose p {
+  @apply my-6;
+}
+
+.prose ul {
+  @apply my-6 list-disc pl-6;
+}
+
+.prose li {
+  @apply mb-2;
+}
+
+/* Inline code styling */
+.prose code:not(pre code) {
+  @apply rounded bg-[#1a1b26]/10 px-1.5 py-0.5 font-mono text-sm text-[#f7768e]
+    dark:bg-[#1a1b26]/30 dark:text-[#ff9e64];
+}
+
+/* Theme Toggle Icon Visibility - Show icon for the theme TO SWITCH TO */
+.moon-icon, /* Show moon in light mode */
+html.dark .sun-icon { /* Show sun in dark mode */
+  display: inline-block;
+}
+
+.sun-icon, /* Hide sun in light mode */
+html.dark .moon-icon { /* Hide moon in dark mode */
+  display: none;
+}

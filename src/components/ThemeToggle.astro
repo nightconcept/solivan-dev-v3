@@ -7,3 +7,45 @@
   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="moon-icon icon"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>
   <span class="sr-only">Toggle theme</span>
 </button>
+
+<script is:inline>
+  const themeToggle = document.getElementById('theme-toggle');
+  const sunIcon = document.querySelector('.sun-icon');
+  const moonIcon = document.querySelector('.moon-icon');
+  const htmlElement = document.documentElement;
+
+  const getInitialTheme = () => {
+    const storedTheme = localStorage.getItem('theme');
+    if (storedTheme) {
+      return storedTheme;
+    }
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    return prefersDark ? 'dark' : 'light';
+  };
+
+  let currentTheme = getInitialTheme();
+
+  const setTheme = (theme) => {
+    localStorage.setItem('theme', theme);
+    htmlElement.classList.toggle('dark', theme === 'dark');
+    // The CSS handles icon visibility based on the .dark class on html
+    currentTheme = theme; // Update global state
+  };
+
+  // Apply the initial theme
+  setTheme(currentTheme);
+
+  // Add click listener to the button
+  themeToggle.addEventListener('click', () => {
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+  });
+
+  // Listen for OS theme changes (if user hasn't manually set theme)
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    // Only update if localStorage is not set (respect user choice)
+    if (localStorage.getItem('theme') === null) {
+      setTheme(e.matches ? 'dark' : 'light');
+    }
+  });
+</script>
