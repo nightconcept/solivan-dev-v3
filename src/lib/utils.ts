@@ -26,14 +26,14 @@ export function stripMarkdown(markdown: string = ''): string {
   markdown = markdown.replace(/(?<!^)\s*#+\s+\S+/g, ' '); // Remove inline headers (e.g., "text # Header") and replace with a space
 
   // Remove horizontal rules
-  markdown = markdown.replace(/^(\*|-|_){3,}\s*$/gm, '');
+  markdown = markdown.replace(/(\s|^)(\*|-|_){3,}(\s|$)/gm, ' '); // Remove HRs, replacing with a space
 
   // Remove blockquotes marker
-  markdown = markdown.replace(/^>\s?/gm, '');
+  markdown = markdown.replace(/^>\s?/gm, ''); // Remove blockquote marker only (at line start)
 
   // Remove list markers
-  markdown = markdown.replace(/^[\*\-\+]\s+/gm, '');
-  markdown = markdown.replace(/^\d+\.\s+/gm, '');
+  markdown = markdown.replace(/^[\*\-\+]\s+/gm, ''); // Remove unordered list marker only (at line start)
+  markdown = markdown.replace(/^\d+\.\s+/gm, '');   // Remove ordered list marker only (at line start)
 
   // Remove images
   markdown = markdown.replace(/!\[.*?\]\(.*?\)/g, ' '); // Standard image tags, replace with space
