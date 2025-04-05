@@ -1,19 +1,14 @@
 ---
-// src/components/BlogPostList.astro
-import type { CollectionEntry } from "astro:content"; // Assuming posts come from content collections
-import FormattedDate from "./FormattedDate.astro"; // Assuming a date formatting component exists
-
-// Define the expected shape of a post based on the React component's usage
-// Define the expected shape of a post based on the React component's usage
-// and the observed TS errors. Assumes these properties are added during data fetching.
+import FormattedDate from "./FormattedDate.astro";
+import { calculateReadTime, truncateDescription } from "../lib/utils";
 type Post = {
-  slug: string; // Assuming slug is derived or available
-  // Properties directly from the updated content collection schema
+  slug: string;
   title: string;
-  description?: string; // Now optional in schema
-  date: Date; // Changed from pubDate/dateObject
-  author?: string[]; // Now an array in schema
-  draft?: boolean; // From schema
+  description?: string;
+  date: Date;
+  author: string;
+  draft?: boolean;
+  body: string;
   // Other potential fields from schema if needed later:
   // lastmod?: Date;
   // categories?: string[];
@@ -32,24 +27,19 @@ interface Props {
 
 const { posts, page = 1, postsPerPage = 5, showSeeMore = false } = Astro.props;
 
-// Filter out draft posts BEFORE pagination/rendering and sort
-const publishedPosts = posts
-  .filter((post) => post.draft !== true) // Keep if draft is false or undefined
-  .sort((a, b) => b.date.valueOf() - a.date.valueOf()); // Sort by date descending (using 'date' field)
-
-// Calculate pagination based on the *filtered* posts
-const totalPosts = publishedPosts.length; // Use filtered list length
+const totalPosts = posts.length;
 const totalPages = Math.ceil(totalPosts / postsPerPage);
 const startIndex = (page - 1) * postsPerPage;
 const endIndex = startIndex + postsPerPage;
-const currentPosts = publishedPosts.slice(startIndex, endIndex); // Slice the filtered list
+const currentPosts = posts.slice(startIndex, endIndex);
+
 const hasMorePosts = totalPosts > postsPerPage && currentPosts.length > 0; // Check if there are actually posts to show more of
 
 // Helper function to generate correct pagination URLs
 const getPageUrl = (pageNum: number): string => {
-  if (pageNum <= 0) return "/blog"; // Safety check
-  if (pageNum === 1) return "/blog"; // Link to base blog page for page 1
-  return `/blog?page=${pageNum}`; // Use query param for other pages
+  if (pageNum <= 0) return "/blog";
+  if (pageNum === 1) return "/blog";
+  return `/blog?page=${pageNum}`;
 };
 ---
 
@@ -60,24 +50,23 @@ const getPageUrl = (pageNum: number): string => {
         data-slug={post.slug}
         class="post-article bg-card dark:bg-card cursor-pointer rounded-lg p-6 shadow-md transition-transform duration-300"
       >
-        {/* Wrap content in a link, but handle click via JS for animation */}
-        <a href={`/blog/${post.slug}`} class="post-link block" onclick="event.preventDefault();">
+        <a href={`/blog/${post.slug}`} class="post-link block">
           <h3 class="hover:text-primary/80 dark:hover:text-primary/80 mb-2 text-xl font-bold transition-colors">
             {post.title}
           </h3>
           <p class="text-card-foreground dark:text-card-foreground mb-4">
-            {post.description} {/* Use description from the schema */}
+            {/* Use description or fallback to word-aware truncated body */}
+            {post.description || truncateDescription(post.body)}
           </p>
           <div class="text-muted-foreground dark:text-muted-foreground flex flex-wrap items-center text-sm">
-             {/* Use FormattedDate component with the 'date' field */}
             <FormattedDate date={post.date} />
-            {/* Removed readTime as it's not in the new schema */}
+            <span class="mx-2">•</span>
+            <span>{calculateReadTime(post.body ?? '')}</span>
             {post.author && (
               <>
                 <span class="mx-2">•</span>
                 <span>
-                  {/* Author is now always an array as per schema */}
-                  By {post.author.join(", ")}
+                  By {post.author}
                 </span>
               </>
             )}
@@ -96,7 +85,7 @@ const getPageUrl = (pageNum: number): string => {
         class="bg-card dark:bg-card hover:bg-card/90 dark:hover:bg-card/90 flex w-full items-center justify-between rounded-lg p-6 shadow-md transition-colors"
       >
         <span class="font-medium">See More</span>
-        <span class="h-5 w-5">→</span> {/* Replaced ChevronRight icon */}
+        <span class="h-5 w-5">→</span>
       </a>
     </div>
   ) : (
@@ -124,22 +113,3 @@ const getPageUrl = (pageNum: number): string => {
     </div>
   )}
 </div>
-
-<script>
-  // Client-side script for click animation + navigation
-  document.querySelectorAll('.post-article').forEach(article => {
-    const link = article.querySelector('.post-link') as HTMLAnchorElement | null;
-    if (!link) return; // Skip if link not found
-
-    article.addEventListener('click', (e) => {
-      // We prevent default navigation in the link's onclick attribute
-      // Apply scaling class to the article
-      article.classList.add('scale-[0.98]');
-
-      // Navigate after a short delay for visual feedback
-      setTimeout(() => {
-        window.location.href = link.href; // Navigate to the link's URL
-      }, 150); // Delay in milliseconds
-    });
-  });
-</script>

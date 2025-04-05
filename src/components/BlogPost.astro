@@ -1,0 +1,18 @@
+---
+import type { MarkdownHeading } from "astro";
+
+interface Props {
+  pageTitle: string;
+  Content: astroHTML.JSX.Element;
+  headings?: MarkdownHeading[];
+}
+
+const { pageTitle, Content } = Astro.props;
+---
+
+<article class="relative mt-8">
+  <h1 class="mb-8 text-3xl font-bold">{pageTitle}</h1>
+  <div>
+    <Content />
+  </div>
+</article>

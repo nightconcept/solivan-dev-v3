@@ -27,13 +27,21 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@playwright/test": "^1.51.1",
+    "@tailwindcss/typography": "^0.5.16",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
     "@types/node": "^22.14.0",
+    "@vitest/coverage-istanbul": "^3.1.1",
+    "@vitest/coverage-v8": "3.1.1",
     "husky": "^9.1.7",
+    "jsdom": "^26.0.0",
     "lint-staged": "^15.5.0",
-    "vitest": "^3.1.1"
+    "tailwindcss-animate": "^1.0.7",
+    "vitest": "^3.1.1",
+    "vitest-dom": "^0.1.1"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,mjs,cjs,json,md}": [
+    "*.{js,jsx,ts,tsx,mjs,cjs,json,md,astro}": [
       "pnpm format",
       "pnpm lint"
     ]

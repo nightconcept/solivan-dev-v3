@@ -1,13 +1,11 @@
 ---
-// src/components/Header.astro
 import ThemeToggle from "./ThemeToggle.astro";
-// SVG Icons (equivalent to lucide-react icons)
 const LeafIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>`;
 const MenuIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>`;
 const XIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>`;
 ---
 
-<header class="bg-background border-border sticky top-0 z-30 mx-auto max-w-3xl border-b py-4">
+<header class="bg-background text-foreground border-border sticky top-0 z-30 mx-auto max-w-3xl border-b py-4 dark:bg-background dark:text-foreground dark:border-border">
   <div class="flex items-center justify-between">
     <div class="flex items-center space-x-4">
       <a href="/" class="flex items-center space-x-2">
@@ -22,13 +20,13 @@ const XIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" vi
     <div class="hidden items-center space-x-6 sm:flex">
       <a
         href="/blog"
-        class="hover:text-primary hover:bg-muted dark:hover:bg-muted rounded-md px-3 py-1 transition-colors"
+        class="hover:text-primary hover:bg-muted dark:text-foreground dark:hover:bg-muted rounded-md px-3 py-1 transition-colors"
       >
         Blog
       </a>
       <a
         href="/about"
-        class="hover:text-primary hover:bg-muted dark:hover:bg-muted rounded-md px-3 py-1 transition-colors"
+        class="hover:text-primary hover:bg-muted dark:text-foreground dark:hover:bg-muted rounded-md px-3 py-1 transition-colors"
       >
         About
       </a>
@@ -39,7 +37,7 @@ const XIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" vi
       <button
         type="button"
         id="mobile-menu-button"
-        class="p-2"
+        class="p-2 dark:text-foreground"
         aria-label="Toggle mobile menu"
         aria-expanded="false"
       >
@@ -50,17 +48,17 @@ const XIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" vi
   </div>
 
   <!-- Mobile menu -->
-  <div id="mobile-menu" class="hidden border-border bg-background mt-4 border-t py-4 sm:hidden">
+  <div id="mobile-menu" class="hidden border-border bg-background text-foreground mt-4 border-t py-4 dark:bg-background dark:text-foreground dark:border-border sm:hidden">
     <div class="flex flex-col space-y-4">
       <a
         href="/blog"
-        class="mobile-menu-link hover:text-primary hover:bg-muted dark:hover:bg-muted rounded-md px-3 py-1 transition-colors"
+        class="mobile-menu-link hover:text-primary hover:bg-muted dark:text-foreground dark:hover:bg-muted rounded-md px-3 py-1 transition-colors"
       >
         Blog
       </a>
       <a
         href="/about"
-        class="mobile-menu-link hover:text-primary hover:bg-muted dark:hover:bg-muted rounded-md px-3 py-1 transition-colors"
+        class="mobile-menu-link hover:text-primary hover:bg-muted dark:text-foreground dark:hover:bg-muted rounded-md px-3 py-1 transition-colors"
       >
         About
       </a>

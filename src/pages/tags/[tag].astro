@@ -1,8 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import Header from "../../components/Header.astro";
-import Footer from "../../components/Footer.astro";
 import Breadcrumb from "../../components/Breadcrumb.astro";
+import BlogPostList from "../../components/BlogPostList.astro"; // Import BlogPostList
 import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 
@@ -18,9 +17,12 @@ if (!tag) {
 const allPosts = await getCollection("blog"); // Assumes 'blog' is the collection name
 
 // Filter posts by the current tag (case-insensitive)
-const filteredPostsRaw = allPosts.filter((post: CollectionEntry<'blog'>) =>
-  post.data.tags?.some((t: string) => t.toLowerCase() === tag.toLowerCase())
+const filteredPostsRaw = allPosts.filter((post: CollectionEntry<"blog">) =>
+  post.data.tags?.some((t: string) => t.toLowerCase() === tag.toLowerCase()),
 );
+
+// Sort posts chronologically (newest first)
+filteredPostsRaw.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
 // Format the tag for display (capitalize words)
 const formattedTag = tag
@@ -32,29 +34,27 @@ const formattedTag = tag
 // Define the page title directly
 const title = `Posts tagged with "${formattedTag}"`;
 
-// Calculate read time (simple example, adjust as needed)
-function calculateReadTime(content: string): string {
-  const wordsPerMinute = 200;
-  const wordCount = content.split(/\s+/).length;
-  const minutes = Math.ceil(wordCount / wordsPerMinute);
-  return `${minutes} min read`;
-}
+// Remove calculateReadTime as BlogPostList handles it
 
-// Prepare posts for the template, explicitly including slug
-const filteredPosts = filteredPostsRaw.map(post => ({
-  slug: post.id, // Use post.id as slug, assuming it matches the filename/slug
-  data: post.data,
-  body: post.body,
+// Prepare posts for the BlogPostList component
+const filteredPosts = filteredPostsRaw.map((post) => ({
+  slug: post.data.slug || post.id, // Use frontmatter slug or Astro's generated id
+  title: post.data.title,
+  description: post.data.description,
+  date: post.data.date,
+  author: post.data.author,
+  draft: post.data.draft,
+  body: post.body ?? "", // Ensure body is a string, provide fallback
 }));
 
 // Function to generate static paths for each tag
 export async function getStaticPaths() {
-  const allPosts = await getCollection('blog');
-  const uniqueTags = [...new Set(allPosts.flatMap(post => post.data.tags || []))];
+  const allPosts = await getCollection("blog");
+  const uniqueTags = [...new Set(allPosts.flatMap((post) => post.data.tags || []))];
 
-  return uniqueTags.map(tag => {
+  return uniqueTags.map((tag) => {
     // Ensure tags are lowercase and URL-friendly (e.g., replace spaces with hyphens)
-    const formattedTag = tag.toLowerCase().replace(/\s+/g, '-');
+    const formattedTag = tag.toLowerCase().replace(/\s+/g, "-");
     return {
       params: { tag: formattedTag },
     };
@@ -63,9 +63,8 @@ export async function getStaticPaths() {
 ---
 
 <BaseLayout title={title}>
-  <div class="bg-background text-foreground min-h-screen">
-    <div class="container mx-auto px-4">
-      <Header />
+  {/* BaseLayout handles the main container and header/footer */}
+  {/* Content specific to the tag page starts here */}
       <div class="mx-auto mt-8 max-w-3xl">
         <Breadcrumb
           items={[
@@ -80,40 +79,16 @@ export async function getStaticPaths() {
         </h1>
 
         {filteredPosts.length > 0 ? (
-          <div class="space-y-8">
-            {filteredPosts.map((post) => ( // No need for explicit type here now
-              <article class="bg-card dark:bg-card rounded-lg p-6 shadow-md">
-                <a href={`/blog/${post.slug}`}>
-                  <h3 class="hover:text-primary/80 dark:hover:text-primary/80 mb-2 text-xl font-bold transition-colors">
-                    {post.data.title}
-                  </h3>
-                </a>
-                <p class="text-card-foreground dark:text-card-foreground mb-4">
-                  {post.data.description || (post.body ?? '').substring(0, 150) + "..."}
-                </p>
-                <div class="text-muted-foreground dark:text-muted-foreground flex items-center text-sm">
-                  <span>
-                    {post.data.date.toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </span>
-                  <span class="mx-2">•</span>
-                  <span>{calculateReadTime(post.body ?? '')}</span>
-                  {/* Simplified conditional author rendering */}
-                  {post.data.author &&
-                    <span class="ml-2">• By {Array.isArray(post.data.author) ? post.data.author.join(", ") : post.data.author}</span>
-                  }
-                </div>
-              </article>
-            ))}
-          </div>
+          // Use BlogPostList component for rendering
+          // Pass all posts; pagination is handled internally by BlogPostList if needed,
+          // but for a tag page, showing all might be intended.
+          // If pagination is desired here, we'd need to add similar logic as blog/index.astro
+          <BlogPostList posts={filteredPosts} />
         ) : (
           <p>No posts found with this tag.</p>
         )}
       </div>
-      <Footer />
+      {/* Footer is handled by BaseLayout */}
     </div>
-  </div>
+  {/* Closing div for mx-auto max-w-3xl */}
 </BaseLayout>
