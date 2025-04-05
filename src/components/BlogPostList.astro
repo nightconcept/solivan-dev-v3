@@ -32,6 +32,7 @@ const totalPages = Math.ceil(totalPosts / postsPerPage);
 const startIndex = (page - 1) * postsPerPage;
 const endIndex = startIndex + postsPerPage;
 const currentPosts = posts.slice(startIndex, endIndex);
+
 const hasMorePosts = totalPosts > postsPerPage && currentPosts.length > 0; // Check if there are actually posts to show more of
 
 // Helper function to generate correct pagination URLs

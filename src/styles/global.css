@@ -198,14 +198,3 @@
   @apply rounded bg-[#1a1b26]/10 px-1.5 py-0.5 font-mono text-sm text-[#f7768e]
     dark:bg-[#1a1b26]/30 dark:text-[#ff9e64];
 }
-
-/* Theme Toggle Icon Visibility - Show icon for the theme TO SWITCH TO */
-.moon-icon, /* Show moon in light mode */
-html.dark .sun-icon { /* Show sun in dark mode */
-  display: inline-block;
-}
-
-.sun-icon, /* Hide sun in light mode */
-html.dark .moon-icon { /* Hide moon in dark mode */
-  display: none;
-}

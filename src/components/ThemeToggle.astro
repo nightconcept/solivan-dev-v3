@@ -1,17 +1,25 @@
 ---
-// No server-side logic needed for this component
+const sunIconSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg>`;
+const moonIconSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>`;
 ---
 
-<button id="theme-toggle" type="button" class="theme-toggle-button" aria-label="Toggle theme">
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sun-icon icon"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg>
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="moon-icon icon"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>
+<button
+  id="theme-toggle"
+  type="button"
+  class="theme-toggle-button flex items-center justify-center rounded-md px-2 py-2 transition-colors hover:text-primary hover:bg-muted dark:hover:bg-muted"
+  aria-label="Toggle theme"
+  data-sun-svg={sunIconSvg}
+  data-moon-svg={moonIconSvg}
+>
+  <span id="theme-icon-container"></span>
   <span class="sr-only">Toggle theme</span>
 </button>
 
 <script is:inline>
   const themeToggle = document.getElementById('theme-toggle');
-  const sunIcon = document.querySelector('.sun-icon');
-  const moonIcon = document.querySelector('.moon-icon');
+  const iconContainer = document.getElementById('theme-icon-container');
+  const sunSvg = themeToggle.dataset.sunSvg;
+  const moonSvg = themeToggle.dataset.moonSvg;
   const htmlElement = document.documentElement;
 
   const getInitialTheme = () => {
@@ -28,7 +36,10 @@
   const setTheme = (theme) => {
     localStorage.setItem('theme', theme);
     htmlElement.classList.toggle('dark', theme === 'dark');
-    // The CSS handles icon visibility based on the .dark class on html
+    // Set the icon for the theme TO SWITCH TO
+    if (iconContainer) {
+      iconContainer.innerHTML = theme === 'light' ? moonSvg : sunSvg;
+    }
     currentTheme = theme; // Update global state
   };
 

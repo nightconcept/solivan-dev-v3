@@ -1,6 +1,4 @@
 ---
-// src/pages/blog/index.astro
-// src/pages/blog/index.astro
 import BaseLayout from "../../layouts/BaseLayout.astro"; // Import BaseLayout
 import BlogPostList from "../../components/BlogPostList.astro"; // Keep BlogPostList import
 import { getValidBlogPosts } from "../../lib/utils"; // Import the utility function
@@ -11,7 +9,9 @@ const POSTS_PER_PAGE = 10;
 const allPosts = await getValidBlogPosts(); // Use the utility function
 
 // Get current page from URL query parameters, default to 1
-const pageParam = Astro.url.searchParams.get("page");
+const { page } = Astro.props;
+const pageParam = page;
+console.log(`pageParam: ${page}`);
 const currentPage = Number.parseInt(pageParam || "1", 10);
 const validPage = Number.isNaN(currentPage) || currentPage < 1 ? 1 : currentPage;
 
