@@ -1,6 +1,14 @@
 import { getCollection, type CollectionEntry } from "astro:content";
 
-// Helper function to strip Markdown more thoroughly
+/**
+ * Helper function to strip Markdown formatting from a string.
+ * It removes HTML tags, code blocks, headers, horizontal rules, blockquotes,
+ * list markers, images, links, bold/italics/strikethrough, inline code,
+ * and extra whitespace/newlines.
+ *
+ * @param {string} [markdown=''] - The Markdown string to strip. Defaults to an empty string.
+ * @returns {string} The stripped text with Markdown formatting removed.
+ */
 export function stripMarkdown(markdown: string = ''): string {
   // Remove HTML tags (basic)
   markdown = markdown.replace(/<[^>]*>/g, '');
@@ -43,7 +51,15 @@ export function stripMarkdown(markdown: string = ''): string {
   return markdown.trim();
 }
 
-// Helper function for word-aware truncation
+/**
+ * Helper function for word-aware truncation of a string.
+ * It strips Markdown formatting, then truncates the text to the specified
+ * maximum length, ensuring that it doesn't cut off in the middle of a word.
+ *
+ * @param {string} text - The text to truncate.
+ * @param {number} [maxLength=150] - The maximum length of the truncated text. Defaults to 150.
+ * @returns {string} The truncated text, with an ellipsis (...) appended if it was truncated.
+ */
 export function truncateDescription(text: string, maxLength: number = 150): string {
   const strippedText = stripMarkdown(text);
   if (strippedText.length <= maxLength) {
@@ -56,7 +72,14 @@ export function truncateDescription(text: string, maxLength: number = 150): stri
   return truncatedText + "...";
 }
 
-// Calculate read time
+/**
+ * Calculates the estimated reading time for a given content string.
+ * It strips Markdown formatting, counts the number of words, and then
+ * calculates the reading time based on an average reading speed of 200 words per minute.
+ *
+ * @param {string} content - The content string to calculate the reading time for.
+ * @returns {string} A string indicating the estimated reading time (e.g., "3 min read").
+ */
 export function calculateReadTime(content: string): string {
   const wordsPerMinute = 200;
   const wordCount = stripMarkdown(content).split(/\s+/).length;
@@ -64,7 +87,17 @@ export function calculateReadTime(content: string): string {
   return `${minutes} min read`;
 }
 
-// Define the expected shape of a validated post
+/**
+ * Defines the expected shape of a validated blog post.
+ * @typedef {Object} ValidPost
+ * @property {string} slug - The unique identifier for the post.
+ * @property {string} title - The title of the post.
+ * @property {string} description - A brief description of the post.
+ * @property {Date} date - The publication date of the post.
+ * @property {string} author - The author(s) of the post.
+ * @property {boolean} draft - Indicates whether the post is a draft.
+ * @property {string} body - The main content of the post.
+ */
 type ValidPost = {
   slug: string;
   title: string;
@@ -75,7 +108,16 @@ type ValidPost = {
   body: string;
 };
 
-// Helper function to fetch, validate, sort, and optionally limit blog posts
+/**
+ * Helper function to fetch, validate, sort, and optionally limit blog posts.
+ * It retrieves posts from the 'blog' collection, filters out invalid posts,
+ * maps them to the expected `ValidPost` structure, sorts them by date (newest first),
+ * and optionally limits the number of returned posts.
+ *
+ * @async
+ * @param {number} [limit] - An optional limit on the number of posts to return.
+ * @returns {Promise<Array<ValidPost>>} A promise that resolves to an array of validated and sorted blog posts.
+ */
 export async function getValidBlogPosts(limit?: number): Promise<Array<ValidPost>> {
   // Fetch blog posts from the 'blog' collection
   const allPostsRaw = await getCollection("blog");
