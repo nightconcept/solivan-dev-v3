@@ -66,10 +66,16 @@ export function truncateDescription(text: string, maxLength: number = 150): stri
     return strippedText;
   }
   // Find the last space within the maxLength
-  const lastSpaceIndex = strippedText.lastIndexOf(' ', maxLength);
+  const lastSpaceIndex = strippedText.lastIndexOf(' ', maxLength -1);
   // If no space found, just truncate (edge case)
-  const truncatedText = lastSpaceIndex > 0 ? strippedText.substring(0, lastSpaceIndex) : strippedText.substring(0, maxLength);
-  return truncatedText + "...";
+  let truncatedText = lastSpaceIndex > 0 ? strippedText.substring(0, lastSpaceIndex) : strippedText.substring(0, maxLength -1);
+  
+  // Check if the last character is a period and adjust the ellipsis accordingly
+  if (truncatedText.endsWith(".")) {
+    return truncatedText + "..";
+  } else {
+    return truncatedText + "...";
+  }
 }
 
 /**
