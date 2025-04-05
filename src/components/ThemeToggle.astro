@@ -72,20 +72,7 @@ html.dark .theme-toggle-button .sun-icon {
     localStorage.setItem('theme', theme);
   };
 
-  // Function to get the initial theme
-  const getInitialTheme = () => {
-    const storedTheme = localStorage.getItem('theme');
-    if (storedTheme) {
-      return storedTheme;
-    }
-    // Check system preference if no stored theme
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  };
-
-  // Set initial theme on load
-  const initialTheme = getInitialTheme();
-  applyTheme(initialTheme);
-
+  // Initial theme is now set in BaseLayout.astro <head> script
   // Add click listener to the button
   themeToggleButton.addEventListener('click', () => {
     const currentTheme = htmlElement.classList.contains('dark') ? 'dark' : 'light';

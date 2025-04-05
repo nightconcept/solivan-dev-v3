@@ -3,22 +3,24 @@ import SocialLinks from "./SocialLinks.astro";
 const today = new Date();
 ---
 
-<footer>
+<footer class="max-w-3xl mx-auto">
 	&copy; {today.getFullYear()} Danny Solivan. All rights reserved.
   <SocialLinks spacing="compact" />
 </footer>
 <style>
 	footer {
-		padding: 2em 1em 6em 1em;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 2em 0 6em 0; /* Remove horizontal padding, rely on parent container */
 		background: linear-gradient(var(--gray-gradient)) no-repeat;
 		color: rgb(var(--gray));
-		text-align: center;
 	}
 	.social-links {
 		display: flex;
-		justify-content: center;
+		/* justify-content: center; */ /* No longer needed, parent handles alignment */
 		gap: 1em;
-		margin-top: 1em;
+		/* margin-top: 1em; */ /* No longer needed, parent handles alignment */
 	}
 	.social-links a {
 		text-decoration: none;

@@ -1,0 +1,85 @@
+---
+// src/layouts/BaseLayout.astro
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import ThemeToggle from "../components/ThemeToggle.astro"; // Theme toggle component
+import { SITE_TITLE, SITE_DESCRIPTION } from "../consts"; // Site constants
+
+// Define props for the layout, with defaults from constants
+interface Props {
+	title?: string;
+	description?: string;
+}
+
+const {
+	title = SITE_TITLE,
+	description = SITE_DESCRIPTION,
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title}</title> {/* Use title prop */}
+    <meta name="description" content={description} /> {/* Use description prop */}
+
+    {/* Favicon links */}
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    {/* <link rel="manifest" href="/site.webmanifest"> */}
+
+    {/* Google Font: Inter */}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+
+    {/* Global styles import */}
+    <style is:global>
+      @import '../styles/global.css';
+
+      /* Apply base font */
+      body {
+        font-family: 'Inter', sans-serif;
+      }
+    </style>
+    {/* Theme initialization script to prevent FOUC */}
+    <script is:inline>
+      const theme = (() => {
+        if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+          return localStorage.getItem('theme');
+        }
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          return 'dark';
+        }
+        return 'light';
+      })();
+
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+      // Optional: Store the initial theme determined if not already stored.
+      // Helps if the user later toggles away from system preference.
+      // localStorage.setItem('theme', theme); // Uncomment if desired
+    </script>
+</head>
+<body class="bg-background text-foreground min-h-screen"> {/* Base theme classes */}
+    <div class="container mx-auto px-4">
+        <Header>
+             {/* Place ThemeToggle button inside Header */}
+             <ThemeToggle slot="theme-toggle" />
+        </Header>
+
+        <main class="mx-auto mt-8 max-w-3xl"> {/* Main content area */}
+            <slot /> {/* Content from the page using this layout will be injected here */}
+        </main>
+
+        <Footer />
+    </div>
+</body>
+</html>

@@ -2,6 +2,7 @@
 // src/components/BlogPostList.astro
 import type { CollectionEntry } from "astro:content"; // Assuming posts come from content collections
 import FormattedDate from "./FormattedDate.astro"; // Assuming a date formatting component exists
+import { calculateReadTime, truncateDescription } from "../lib/utils"; // Import the utility functions
 
 // Define the expected shape of a post based on the React component's usage
 // Define the expected shape of a post based on the React component's usage
@@ -14,6 +15,7 @@ type Post = {
   date: Date; // Changed from pubDate/dateObject
   author?: string[]; // Now an array in schema
   draft?: boolean; // From schema
+  body: string; // Added body for read time and excerpt
   // Other potential fields from schema if needed later:
   // lastmod?: Date;
   // categories?: string[];
@@ -32,6 +34,7 @@ interface Props {
 
 const { posts, page = 1, postsPerPage = 5, showSeeMore = false } = Astro.props;
 
+// stripMarkdown function removed, now imported from ../lib/utils
 // Filter out draft posts BEFORE pagination/rendering and sort
 const publishedPosts = posts
   .filter((post) => post.draft !== true) // Keep if draft is false or undefined
@@ -51,6 +54,10 @@ const getPageUrl = (pageNum: number): string => {
   if (pageNum === 1) return "/blog"; // Link to base blog page for page 1
   return `/blog?page=${pageNum}`; // Use query param for other pages
 };
+
+// truncateDescription function removed, now imported from ../lib/utils
+
+// calculateReadTime function removed, now imported from ../lib/utils
 ---
 
 <div>
@@ -66,12 +73,14 @@ const getPageUrl = (pageNum: number): string => {
             {post.title}
           </h3>
           <p class="text-card-foreground dark:text-card-foreground mb-4">
-            {post.description} {/* Use description from the schema */}
+            {/* Use description or fallback to word-aware truncated body */}
+            {post.description || truncateDescription(post.body)}
           </p>
           <div class="text-muted-foreground dark:text-muted-foreground flex flex-wrap items-center text-sm">
              {/* Use FormattedDate component with the 'date' field */}
             <FormattedDate date={post.date} />
-            {/* Removed readTime as it's not in the new schema */}
+            <span class="mx-2">•</span>
+            <span>{calculateReadTime(post.body ?? '')}</span> {/* Add read time */}
             {post.author && (
               <>
                 <span class="mx-2">•</span>
