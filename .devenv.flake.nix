@@ -2,13 +2,13 @@
   inputs =
     let
       version = "1.4.1";
-system = "x86_64-linux";
-devenv_root = "/home/danny/Documents/GitHub/astro-solivan-dev-v3";
+system = "aarch64-darwin";
+devenv_root = "/Users/danny/Documents/GitHub/astro-solivan-dev-v3";
 devenv_dotfile = ./.devenv;
 devenv_dotfile_string = ".devenv";
 container_name = null;
-devenv_tmpdir = "/run/user/1000";
-devenv_runtime = "/run/user/1000/devenv-445728d";
+devenv_tmpdir = "/var/folders/th/410_cjb10xg9k6pjmlhcswd80000gn/T/";
+devenv_runtime = "/var/folders/th/410_cjb10xg9k6pjmlhcswd80000gn/T/devenv-76b5b21";
 devenv_istesting = false;
 devenv_direnvrc_latest_version = 1;
 
@@ -25,13 +25,13 @@ devenv_direnvrc_latest_version = 1;
       outputs = { nixpkgs, ... }@inputs:
         let
           version = "1.4.1";
-system = "x86_64-linux";
-devenv_root = "/home/danny/Documents/GitHub/astro-solivan-dev-v3";
+system = "aarch64-darwin";
+devenv_root = "/Users/danny/Documents/GitHub/astro-solivan-dev-v3";
 devenv_dotfile = ./.devenv;
 devenv_dotfile_string = ".devenv";
 container_name = null;
-devenv_tmpdir = "/run/user/1000";
-devenv_runtime = "/run/user/1000/devenv-445728d";
+devenv_tmpdir = "/var/folders/th/410_cjb10xg9k6pjmlhcswd80000gn/T/";
+devenv_runtime = "/var/folders/th/410_cjb10xg9k6pjmlhcswd80000gn/T/devenv-76b5b21";
 devenv_istesting = false;
 devenv_direnvrc_latest_version = 1;
 
