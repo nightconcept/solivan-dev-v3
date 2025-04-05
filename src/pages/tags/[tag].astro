@@ -44,7 +44,7 @@ const filteredPosts = filteredPostsRaw.map((post) => ({
   date: post.data.date,
   author: post.data.author,
   draft: post.data.draft,
-  body: post.body ?? '', // Ensure body is a string, provide fallback
+  body: post.body ?? "", // Ensure body is a string, provide fallback
 }));
 
 // Function to generate static paths for each tag

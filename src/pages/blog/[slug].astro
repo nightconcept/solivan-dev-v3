@@ -7,22 +7,21 @@ import { SITE_TITLE } from "../../consts";
 // 1. Generate a path for each markdown file in src/content/blog
 export async function getStaticPaths() {
   const blogEntries = await getCollection("blog");
-  return blogEntries
-    .map((entry: CollectionEntry<"blog">) => {
-      // Log the entry and its slug to help debug
-      // @ts-ignore - TS type inference seems incorrect here, entry.slug exists at runtime
-      console.log(`Processing entry: ID=${entry.id}, Slug=${entry.slug}`);
-      // @ts-ignore - TS type inference seems incorrect here, entry.slug exists at runtime
-      if (!entry.slug) {
-        console.error(`Error: Entry with ID ${entry.id} is missing a slug!`);
-      }
-      return {
+  return blogEntries.map((entry: CollectionEntry<"blog">) => {
+    // Log the entry and its slug to help debug
+    // @ts-ignore - TS type inference seems incorrect here, entry.slug exists at runtime
+    console.log(`Processing entry: ID=${entry.id}, Slug=${entry.slug}`);
+    // @ts-ignore - TS type inference seems incorrect here, entry.slug exists at runtime
+    if (!entry.slug) {
+      console.error(`Error: Entry with ID ${entry.id} is missing a slug!`);
+    }
+    return {
       // Add type hint for entry
       // @ts-ignore - TS type inference seems incorrect here, entry.slug exists at runtime
       params: { slug: entry.slug },
       props: { entry }, // Pass the full entry object as props
-      };
-    });
+    };
+  });
 }
 
 // 2. Get the entry from props passed by getStaticPaths

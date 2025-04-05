@@ -1,3 +1,5 @@
+import { getCollection, type CollectionEntry } from "astro:content";
+
 // Helper function to strip Markdown more thoroughly
 export function stripMarkdown(markdown: string = ''): string {
   // Remove HTML tags (basic)
@@ -61,4 +63,53 @@ export function calculateReadTime(content: string): string {
   const wordCount = stripMarkdown(content).split(/\s+/).length; // Use the exported stripMarkdown
   const minutes = Math.ceil(wordCount / wordsPerMinute);
   return `${minutes} min read`;
+}
+// Define the expected shape of a validated post
+type ValidPost = {
+  slug: string;
+  title: string;
+  description: string;
+  date: Date;
+  author: string;
+  draft: boolean;
+  body: string;
+};
+
+// Helper function to fetch, validate, sort, and optionally limit blog posts
+export async function getValidBlogPosts(limit?: number): Promise<Array<ValidPost>> {
+  // Fetch blog posts from the 'blog' collection
+  const allPostsRaw = await getCollection("blog");
+
+  // Filter posts to ensure they have a valid publication date and map to the expected structure
+  const validPosts = allPostsRaw
+    .filter((post): post is CollectionEntry<"blog"> & { data: { date: Date } } => post.data.date instanceof Date) // Type guard for date
+    .map((post): ValidPost => {
+      // Handle potential array/undefined author - adjust logic if needed based on actual schema
+      let authorString = "Unknown Author";
+      if (Array.isArray(post.data.author)) {
+        authorString = post.data.author.join(", ");
+      } else if (typeof post.data.author === 'string' && post.data.author) {
+        authorString = post.data.author;
+      }
+
+      return {
+        slug: post.id, // Use post.id as the source for the slug
+        title: post.data.title ?? "Untitled Post", // Provide default
+        description: post.data.description ?? "", // Provide default for description
+        date: post.data.date, // Already validated by filter
+        author: authorString, // Use processed author string
+        draft: post.data.draft ?? false, // Provide default if draft is optional
+        body: post.body ?? "", // Ensure body is a string, provide fallback
+      };
+    });
+
+  // Sort posts by date, newest first
+  const sortedPosts = validPosts.sort((a, b) => b.date.getTime() - a.date.getTime());
+
+  // Apply limit if provided and positive
+  if (limit && limit > 0) {
+    return sortedPosts.slice(0, limit);
+  }
+
+  return sortedPosts; // Return all sorted posts if no limit
 }

@@ -8,7 +8,7 @@ type Post = {
   title: string;
   description?: string;
   date: Date;
-  author?: string[];
+  author: string; // Author is now always a string from getValidBlogPosts
   draft?: boolean; // From schema
   body: string; // Added body for read time and excerpt
   // Other potential fields from schema if needed later:
@@ -76,7 +76,8 @@ const getPageUrl = (pageNum: number): string => {
                 <span class="mx-2">•</span>
                 <span>
                   {/* Author is now always an array as per schema */}
-                  By {post.author.join(", ")}
+                  {/* Author is now a pre-formatted string */}
+                  By {post.author}
                 </span>
               </>
             )}
