@@ -137,6 +137,7 @@ export async function getValidBlogPosts(limit?: number): Promise<Array<ValidPost
   // Filter posts to ensure they have a valid publication date and map to the expected structure
   const validPosts = allPostsRaw
     .filter((post): post is CollectionEntry<"blog"> & { data: { date: Date } } => post.data.date instanceof Date) // Type guard for date
+    .filter(post => !(post.data.draft === true)) // Filter out drafts (include if false or undefined)
     .map((post): ValidPost => {
       // Handle potential array/undefined author - adjust logic if needed based on actual schema
       let authorString = "Unknown Author";

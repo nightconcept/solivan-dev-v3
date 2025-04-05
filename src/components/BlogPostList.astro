@@ -2,14 +2,13 @@
 import FormattedDate from "./FormattedDate.astro";
 import { calculateReadTime, truncateDescription } from "../lib/utils";
 type Post = {
-  slug: string; // Assuming slug is derived or available
-  // Properties directly from the updated content collection schema
+  slug: string;
   title: string;
   description?: string;
   date: Date;
-  author: string; // Author is now always a string from getValidBlogPosts
-  draft?: boolean; // From schema
-  body: string; // Added body for read time and excerpt
+  author: string;
+  draft?: boolean;
+  body: string;
   // Other potential fields from schema if needed later:
   // lastmod?: Date;
   // categories?: string[];
@@ -28,17 +27,11 @@ interface Props {
 
 const { posts, page = 1, postsPerPage = 5, showSeeMore = false } = Astro.props;
 
-// Filter out draft posts BEFORE pagination/rendering and sort
-const publishedPosts = posts
-  .filter((post) => post.draft !== true) // Keep if draft is false or undefined
-  .sort((a, b) => b.date.valueOf() - a.date.valueOf()); // Sort by date
-
-// Calculate pagination based on the *filtered* posts
-const totalPosts = publishedPosts.length; // Use filtered list length
+const totalPosts = posts.length;
 const totalPages = Math.ceil(totalPosts / postsPerPage);
 const startIndex = (page - 1) * postsPerPage;
 const endIndex = startIndex + postsPerPage;
-const currentPosts = publishedPosts.slice(startIndex, endIndex); // Slice the filtered list
+const currentPosts = posts.slice(startIndex, endIndex);
 const hasMorePosts = totalPosts > postsPerPage && currentPosts.length > 0; // Check if there are actually posts to show more of
 
 // Helper function to generate correct pagination URLs
