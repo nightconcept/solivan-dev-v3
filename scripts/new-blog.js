@@ -1,8 +1,7 @@
-// scripts/new-blog.js
 import process from "node:process";
 const fs = require("fs");
 const path = require("path");
-const { format } = require("date-fns"); // Use date-fns for formatting
+const { format } = require("date-fns");
 
 // Helper function for sanitizing title to slug/filename base
 // Converts to lowercase, replaces spaces with hyphens, removes most non-alphanumeric chars
@@ -12,7 +11,7 @@ function sanitizeTitle(title) {
       .toLowerCase()
       // Remove characters that are not letters (incl. Unicode), numbers, spaces, or hyphens
       .replace(/[^\p{L}\p{N}\s-]/gu, "")
-      .trim() // Remove leading/trailing whitespace
+      .trim()
       .replace(/\s+/g, "-") // Replace spaces with hyphens
       .replace(/-+/g, "-")
   ); // Replace multiple hyphens with single one
@@ -43,7 +42,7 @@ if (args.length !== 1) {
 const inputArg = args[0];
 let filename;
 let slug;
-let title = ""; // Default title is empty (will use template's default)
+let title = "";
 
 // Determine if input is filename or title, derive slug/filename/title
 if (inputArg.endsWith(".md")) {

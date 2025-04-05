@@ -1,19 +1,14 @@
 ---
-// src/components/BlogPostList.astro
-import type { CollectionEntry } from "astro:content"; // Assuming posts come from content collections
-import FormattedDate from "./FormattedDate.astro"; // Assuming a date formatting component exists
-import { calculateReadTime, truncateDescription } from "../lib/utils"; // Import the utility functions
-
-// Define the expected shape of a post based on the React component's usage
-// Define the expected shape of a post based on the React component's usage
-// and the observed TS errors. Assumes these properties are added during data fetching.
+import type { CollectionEntry } from "astro:content";
+import FormattedDate from "./FormattedDate.astro";
+import { calculateReadTime, truncateDescription } from "../lib/utils";
 type Post = {
   slug: string; // Assuming slug is derived or available
   // Properties directly from the updated content collection schema
   title: string;
-  description?: string; // Now optional in schema
-  date: Date; // Changed from pubDate/dateObject
-  author?: string[]; // Now an array in schema
+  description?: string;
+  date: Date;
+  author?: string[];
   draft?: boolean; // From schema
   body: string; // Added body for read time and excerpt
   // Other potential fields from schema if needed later:
@@ -34,11 +29,10 @@ interface Props {
 
 const { posts, page = 1, postsPerPage = 5, showSeeMore = false } = Astro.props;
 
-// stripMarkdown function removed, now imported from ../lib/utils
 // Filter out draft posts BEFORE pagination/rendering and sort
 const publishedPosts = posts
   .filter((post) => post.draft !== true) // Keep if draft is false or undefined
-  .sort((a, b) => b.date.valueOf() - a.date.valueOf()); // Sort by date descending (using 'date' field)
+  .sort((a, b) => b.date.valueOf() - a.date.valueOf()); // Sort by date
 
 // Calculate pagination based on the *filtered* posts
 const totalPosts = publishedPosts.length; // Use filtered list length
@@ -54,10 +48,6 @@ const getPageUrl = (pageNum: number): string => {
   if (pageNum === 1) return "/blog"; // Link to base blog page for page 1
   return `/blog?page=${pageNum}`; // Use query param for other pages
 };
-
-// truncateDescription function removed, now imported from ../lib/utils
-
-// calculateReadTime function removed, now imported from ../lib/utils
 ---
 
 <div>
@@ -105,7 +95,7 @@ const getPageUrl = (pageNum: number): string => {
         class="bg-card dark:bg-card hover:bg-card/90 dark:hover:bg-card/90 flex w-full items-center justify-between rounded-lg p-6 shadow-md transition-colors"
       >
         <span class="font-medium">See More</span>
-        <span class="h-5 w-5">→</span> {/* Replaced ChevronRight icon */}
+        <span class="h-5 w-5">→</span>
       </a>
     </div>
   ) : (
@@ -133,22 +123,3 @@ const getPageUrl = (pageNum: number): string => {
     </div>
   )}
 </div>
-
-<script>
-  // Client-side script for click animation + navigation
-  document.querySelectorAll('.post-article').forEach(article => {
-    const link = article.querySelector('.post-link') as HTMLAnchorElement | null;
-    if (!link) return; // Skip if link not found
-
-    article.addEventListener('click', (e) => {
-      // We prevent default navigation in the link's onclick attribute
-      // Apply scaling class to the article
-      article.classList.add('scale-[0.98]');
-
-      // Navigate after a short delay for visual feedback
-      setTimeout(() => {
-        window.location.href = link.href; // Navigate to the link's URL
-      }, 150); // Delay in milliseconds
-    });
-  });
-</script>

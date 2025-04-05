@@ -6,7 +6,6 @@ interface Props {
 const { spacing = "normal" } = Astro.props;
 const spacingClass = spacing === "compact" ? "space-x-3" : "space-x-4";
 ---
-
 <div class:list={["flex", spacingClass]}>
   <a
     href="https://mastodon.social/@danny"
