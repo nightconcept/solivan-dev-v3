@@ -1,4 +1,0 @@
-/Users/danny/Documents/GitHub/astro-solivan-dev-v3/.devenv.flake.nix
-/Users/danny/Documents/GitHub/astro-solivan-dev-v3/devenv.lock
-/Users/danny/Documents/GitHub/astro-solivan-dev-v3/devenv.nix
-/Users/danny/Documents/GitHub/astro-solivan-dev-v3/devenv.yaml
