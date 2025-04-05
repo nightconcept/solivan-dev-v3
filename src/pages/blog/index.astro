@@ -1,28 +1,15 @@
 ---
 // src/pages/blog/index.astro
-import { getCollection } from "astro:content";
+// src/pages/blog/index.astro
 import BaseLayout from "../../layouts/BaseLayout.astro"; // Import BaseLayout
 import BlogPostList from "../../components/BlogPostList.astro"; // Keep BlogPostList import
+import { getValidBlogPosts } from "../../lib/utils"; // Import the utility function
 
-// Fetch all blog posts
-const allPostsRaw = await getCollection("blog");
+// Number of posts to display per page on the blog index
+const POSTS_PER_PAGE = 10;
 
-// Map posts to the structure expected by BlogPostList
-// Ensure slug is top-level, using frontmatter slug or falling back to id
-// Also filter drafts here, although BlogPostList also filters. Filtering early might be slightly more efficient.
-const allPosts = allPostsRaw // Type is inferred
-  .filter((post) => post.data.draft !== true) // Pre-filter drafts
-  .map((post) => ({
-    slug: post.data.slug || post.id, // Use frontmatter slug or Astro's generated id as slug
-    title: post.data.title,
-    description: post.data.description,
-    date: post.data.date, // Use the 'date' field from the schema
-    author: post.data.author,
-    draft: post.data.draft,
-    body: post.body, // Add the post body
-    // Add any other fields from the schema if BlogPostList needs them later
-  }))
-  .sort((a, b) => b.date.valueOf() - a.date.valueOf()); // Sort posts by date descending
+// Fetch and validate all blog posts using the utility function
+const allPosts = await getValidBlogPosts(); // Use the utility function
 
 // Get current page from URL query parameters, default to 1
 const pageParam = Astro.url.searchParams.get("page");
@@ -35,6 +22,6 @@ const pageDescription = "Read the latest articles from the blog."; // Add a suit
 ---
 <BaseLayout title={pageTitle} description={pageDescription}>
   <h1 class="mb-8 text-3xl font-bold">{pageTitle}</h1>
-  <BlogPostList posts={allPosts} page={validPage} /> {/* Pass mapped posts and page */}
+  <BlogPostList posts={allPosts} page={validPage} postsPerPage={POSTS_PER_PAGE} /> {/* Pass mapped posts, page, and postsPerPage */}
 </BaseLayout>
 </html>

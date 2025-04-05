@@ -108,7 +108,7 @@ export async function getValidBlogPosts(limit?: number): Promise<Array<ValidPost
 
   // Apply limit if provided and positive
   if (limit && limit > 0) {
-    return sortedPosts.slice(0, limit);
+    return sortedPosts.slice(0, limit+1);
   }
 
   return sortedPosts; // Return all sorted posts if no limit

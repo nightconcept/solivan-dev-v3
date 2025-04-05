@@ -1,50 +1,54 @@
 ---
-import { getCollection, type CollectionEntry } from "astro:content";
+import type { CollectionEntry } from "astro:content"; // Keep type import if needed elsewhere
 import BaseLayout from "../../layouts/BaseLayout.astro"; // Import BaseLayout
 import Breadcrumb from "../../components/Breadcrumb.astro";
 import { SITE_TITLE } from "../../consts";
+import { getValidBlogPosts } from "../../lib/utils"; // Import the utility function
 
 // 1. Generate a path for each markdown file in src/content/blog
 export async function getStaticPaths() {
-  const blogEntries = await getCollection("blog");
-  return blogEntries.map((entry: CollectionEntry<"blog">) => {
-    // Log the entry and its slug to help debug
-    // @ts-ignore - TS type inference seems incorrect here, entry.slug exists at runtime
-    console.log(`Processing entry: ID=${entry.id}, Slug=${entry.slug}`);
-    // @ts-ignore - TS type inference seems incorrect here, entry.slug exists at runtime
-    if (!entry.slug) {
-      console.error(`Error: Entry with ID ${entry.id} is missing a slug!`);
-    }
+  const validBlogPosts = await getValidBlogPosts(); // Use the utility function
+  return validBlogPosts.map((entry) => { // Map over the valid posts
+    // Logging can be kept if useful, but ensure it uses the correct fields from getValidBlogPosts
+    // console.log(`Processing entry: Slug=${entry.slug}`);
+    // No need to check for missing slug if getValidBlogPosts guarantees it
     return {
       // Add type hint for entry
-      // @ts-ignore - TS type inference seems incorrect here, entry.slug exists at runtime
-      params: { slug: entry.slug },
-      props: { entry }, // Pass the full entry object as props
+      params: { slug: entry.slug }, // slug is guaranteed by getValidBlogPosts
+      // No props needed, just the params for routing
     };
   });
 }
 
-// 2. Get the entry from props passed by getStaticPaths
-const { entry } = Astro.props as { entry: CollectionEntry<"blog"> }; // Type assertion for props
+// 2. Get the slug from URL parameters
+const { slug } = Astro.params;
 
-// Astro handles 404s automatically based on getStaticPaths results
-// No need for explicit getEntryBySlug or 404 check here
+// Add a check to ensure slug is defined (should always be true due to getStaticPaths)
+if (typeof slug !== 'string') {
+  throw new Error(`Expected slug to be a string, but received: ${slug}`);
+}
 
-// 5. Render the content
-// @ts-ignore - TS type inference seems incorrect here, entry.render exists at runtime
+// 3. Fetch the full blog entry using the slug
+import { getEntry } from "astro:content";
+const entry = await getEntry('blog', slug) as CollectionEntry<'blog'>; // Fetch and assert type
+
+// 4. Handle cases where the entry wasn't found (though getStaticPaths should prevent this)
+if (!entry) {
+  return new Response(null, { status: 404, statusText: 'Not Found' });
+}
+
+// 5. Render the content using the fetched entry
 const { Content } = await entry.render();
 
 // Capitalize the page slug for the breadcrumb label if title is missing (fallback)
 const pageTitle =
   entry.data.title ||
-  // @ts-ignore - TS type inference seems incorrect here, entry.slug exists at runtime
-  entry.slug.charAt(0).toUpperCase() + entry.slug.slice(1); // Use entry.slug here
+  slug.charAt(0).toUpperCase() + slug.slice(1); // Use slug from params (already checked)
 
 const breadcrumbItems = [
   { label: "Home", href: "/" },
   { label: "Blog", href: "/blog" },
-  // @ts-ignore - TS type inference seems incorrect here, entry.slug exists at runtime
-  { label: pageTitle, href: `/blog/${entry.slug}` }, // Use entry.slug here
+  { label: pageTitle, href: `/blog/${slug}` }, // Use slug from params
 ];
 
 const pageDescription = entry.data.description || `Read the post: ${pageTitle}`;

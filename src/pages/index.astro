@@ -2,11 +2,11 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ProfileCard from "../components/ProfileCard.astro";
 import BlogPostList from "../components/BlogPostList.astro";
-import { getValidBlogPosts } from "../lib/utils"; // Import the new function
+import { getValidBlogPosts } from "../lib/utils";
 import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
 
-// Fetch and validate blog posts using the utility function
-const validPosts = await getValidBlogPosts();
+const POSTS_PER_PAGE = 3;
+const validPosts = await getValidBlogPosts(POSTS_PER_PAGE);
 
 // Page metadata using constants
 const title = SITE_TITLE;
@@ -16,6 +16,6 @@ const description = SITE_DESCRIPTION;
     <ProfileCard />
     <section class="mt-16" aria-labelledby="recent-posts-heading">
         <h2 id="recent-posts-heading" class="mb-8 text-2xl font-bold">Recent Posts</h2>
-        <BlogPostList posts={validPosts} postsPerPage={3} showSeeMore={true} />
+        <BlogPostList posts={validPosts} postsPerPage={POSTS_PER_PAGE} showSeeMore={true} />
     </section>
 </BaseLayout>
