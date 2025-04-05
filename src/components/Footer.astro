@@ -3,28 +3,7 @@ import SocialLinks from "./SocialLinks.astro";
 const today = new Date();
 ---
 
-<footer class="max-w-3xl mx-auto">
+<footer class="max-w-3xl mx-auto flex items-center justify-between py-8 pb-24 text-gray-500">
 	&copy; 2007-{today.getFullYear()} Danny Solivan. All rights reserved.
   <SocialLinks spacing="compact" />
 </footer>
-<style>
-	footer {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		padding: 2em 0 6em 0;
-		background: linear-gradient(var(--gray-gradient)) no-repeat;
-		color: rgb(var(--gray));
-	}
-	.social-links {
-		display: flex;
-		gap: 1em;
-	}
-	.social-links a {
-		text-decoration: none;
-		color: rgb(var(--gray));
-	}
-	.social-links a:hover {
-		color: rgb(var(--gray-dark));
-	}
-</style>
