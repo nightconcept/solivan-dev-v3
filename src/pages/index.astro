@@ -1,52 +1,87 @@
 ---
-import BaseHead from "../components/BaseHead.astro";
-import Header from "../components/Header.astro";
-import Footer from "../components/Footer.astro";
-import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
+// Imports for components and content
+import Header from '../components/Header.astro';
+import ProfileCard from '../components/ProfileCard.astro';
+import BlogPostList from '../components/BlogPostList.astro';
+import Footer from '../components/Footer.astro';
+import ThemeToggle from '../components/ThemeToggle.astro'; // Theme toggle component
+import { getCollection } from 'astro:content';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../consts'; // Site constants
+
+// Fetch blog posts from the 'blog' collection
+const allPostsRaw = await getCollection('blog');
+
+// Filter posts to ensure they have a valid publication date and map to the structure expected by BlogPostList
+const validPosts = allPostsRaw
+  .filter(post => post.data.date instanceof Date) // Ensure date is a valid Date
+  .map(post => ({
+    slug: post.id, // Use post.id for the slug (assuming this is correct)
+    // Ensure properties match the 'Post' type expected by BlogPostList
+    title: post.data.title,
+    description: post.data.description, // Use 'description'
+    date: post.data.date, // Use 'date' and ensure it's a Date object
+    author: post.data.author, // Pass author if needed by BlogPostList (check component props)
+    draft: post.data.draft, // Pass draft status
+    // Add any other properties from the schema if BlogPostList expects them
+}));
+
+// Note: Sorting is now handled within BlogPostList.astro
+// We pass the filtered and mapped 'validPosts' directly.
+
+// Page metadata using constants or fallbacks from original layout.tsx
+const title = SITE_TITLE || "/home/danny";
+const description = SITE_DESCRIPTION || "Personal blog and website";
 ---
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-	</head>
-	<body>
-		<Header />
-		<main>
-      <h1 class="text-3xl font-bold underline">
-        Hello world!
-      </h1>
-			<h1>🧑‍🚀 Hello, Astronaut!</h1>
-			<p>
-				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This
-				template serves as a lightweight, minimally-styled starting point for anyone looking to build
-				a personal website, blog, or portfolio with Astro.
-			</p>
-			<p>
-				This template comes with a few integrations already configured in your
-				<code>astro.config.mjs</code> file. You can customize your setup with
-				<a href="https://astro.build/integrations">Astro Integrations</a> to add tools like Tailwind,
-				React, or Vue to your project.
-			</p>
-			<p>Here are a few ideas on how to get started with the template:</p>
-			<ul>
-				<li>Edit this page in <code>src/pages/index.astro</code></li>
-				<li>Edit the site header items in <code>src/components/Header.astro</code></li>
-				<li>Add your name to the footer in <code>src/components/Footer.astro</code></li>
-				<li>Check out the included blog posts in <code>src/content/blog/</code></li>
-				<li>Customize the blog post page layout in <code>src/layouts/BlogPost.astro</code></li>
-			</ul>
-			<p>
-				Have fun! If you get stuck, remember to
-				<a href="https://docs.astro.build/">read the docs</a>
-				or <a href="https://astro.build/chat">join us on Discord</a> to ask questions.
-			</p>
-			<p>
-				Looking for a blog template with a bit more personality? Check out
-				<a href="https://github.com/Charca/astro-blog-template">astro-blog-template</a>
-				by <a href="https://twitter.com/Charca">Maxi Ferreira</a>.
-			</p>
-		</main>
-		<Footer />
-	</body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    {/* Favicon links from layout.tsx */}
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    {/* Consider adding a link to a webmanifest file if you have one */}
+    {/* <link rel="manifest" href="/site.webmanifest"> */}
+
+    {/* Google Font: Inter */}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+
+    {/* Global styles import - Theme variables and Tailwind should be defined/imported here */}
+    <style is:global>
+      @import '../styles/global.css';
+
+      /* Apply base font if not already handled by global.css or Tailwind base styles */
+      body {
+        font-family: 'Inter', sans-serif;
+      }
+    </style>
+    {/* The <script is:inline> inside ThemeToggle.astro is automatically hoisted to the head by Astro */}
+</head>
+<body class="bg-background text-foreground min-h-screen"> {/* Base theme classes */}
+    <div class="container mx-auto px-4">
+        <Header>
+             {/* Place ThemeToggle button inside Header using a slot */}
+             <ThemeToggle slot="theme-toggle" />
+        </Header>
+
+        <main class="mx-auto mt-8 max-w-3xl"> {/* Main content area */}
+            <ProfileCard />
+            <section class="mt-16" aria-labelledby="recent-posts-heading"> {/* Blog post section */}
+                <h2 id="recent-posts-heading" class="mb-8 text-2xl font-bold">Recent Posts</h2>
+                {/* Display first 3 posts, link to more */}
+                <BlogPostList posts={validPosts} postsPerPage={3} showSeeMore={true} /> {/* Pass filtered & mapped posts */}
+            </section>
+        </main>
+
+        <Footer />
+    </div>
+</body>
 </html>

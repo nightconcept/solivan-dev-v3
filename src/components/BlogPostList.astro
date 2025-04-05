@@ -1,0 +1,145 @@
+---
+// src/components/BlogPostList.astro
+import type { CollectionEntry } from 'astro:content'; // Assuming posts come from content collections
+import FormattedDate from './FormattedDate.astro'; // Assuming a date formatting component exists
+
+// Define the expected shape of a post based on the React component's usage
+// Define the expected shape of a post based on the React component's usage
+// and the observed TS errors. Assumes these properties are added during data fetching.
+type Post = {
+  slug: string; // Assuming slug is derived or available
+  // Properties directly from the updated content collection schema
+  title: string;
+  description?: string; // Now optional in schema
+  date: Date; // Changed from pubDate/dateObject
+  author?: string[]; // Now an array in schema
+  draft?: boolean; // From schema
+  // Other potential fields from schema if needed later:
+  // lastmod?: Date;
+  // categories?: string[];
+  // tags?: string[];
+  // weight?: number;
+  // cover?: { image?: string; caption?: string; alt?: string; relative?: boolean };
+  // etc.
+};
+
+interface Props {
+  posts: Post[];
+  page?: number;
+  postsPerPage?: number;
+  showSeeMore?: boolean;
+}
+
+const { posts, page = 1, postsPerPage = 5, showSeeMore = false } = Astro.props;
+
+// Filter out draft posts BEFORE pagination/rendering and sort
+const publishedPosts = posts
+  .filter((post) => post.draft !== true) // Keep if draft is false or undefined
+  .sort((a, b) => b.date.valueOf() - a.date.valueOf()); // Sort by date descending (using 'date' field)
+
+// Calculate pagination based on the *filtered* posts
+const totalPosts = publishedPosts.length; // Use filtered list length
+const totalPages = Math.ceil(totalPosts / postsPerPage);
+const startIndex = (page - 1) * postsPerPage;
+const endIndex = startIndex + postsPerPage;
+const currentPosts = publishedPosts.slice(startIndex, endIndex); // Slice the filtered list
+const hasMorePosts = totalPosts > postsPerPage && currentPosts.length > 0; // Check if there are actually posts to show more of
+
+// Helper function to generate correct pagination URLs
+const getPageUrl = (pageNum: number): string => {
+  if (pageNum <= 0) return '/blog'; // Safety check
+  if (pageNum === 1) return '/blog'; // Link to base blog page for page 1
+  return `/blog?page=${pageNum}`; // Use query param for other pages
+};
+---
+
+<div>
+  <div class="space-y-8">
+    {currentPosts.map((post) => (
+      <article
+        data-slug={post.slug}
+        class="post-article bg-card dark:bg-card cursor-pointer rounded-lg p-6 shadow-md transition-transform duration-300"
+      >
+        {/* Wrap content in a link, but handle click via JS for animation */}
+        <a href={`/blog/${post.slug}`} class="post-link block" onclick="event.preventDefault();">
+          <h3 class="hover:text-primary/80 dark:hover:text-primary/80 mb-2 text-xl font-bold transition-colors">
+            {post.title}
+          </h3>
+          <p class="text-card-foreground dark:text-card-foreground mb-4">
+            {post.description} {/* Use description from the schema */}
+          </p>
+          <div class="text-muted-foreground dark:text-muted-foreground flex flex-wrap items-center text-sm">
+             {/* Use FormattedDate component with the 'date' field */}
+            <FormattedDate date={post.date} />
+            {/* Removed readTime as it's not in the new schema */}
+            {post.author && (
+              <>
+                <span class="mx-2">•</span>
+                <span>
+                  {/* Author is now always an array as per schema */}
+                  By {post.author.join(", ")}
+                </span>
+              </>
+            )}
+          </div>
+        </a>
+      </article>
+    ))}
+  </div>
+
+  {/* Conditional Rendering for "See More" or Pagination */}
+  {showSeeMore && hasMorePosts ? (
+    // "See More" Button linking to the main blog page
+    <div class="mt-8">
+      <a
+        href="/blog"
+        class="bg-card dark:bg-card hover:bg-card/90 dark:hover:bg-card/90 flex w-full items-center justify-between rounded-lg p-6 shadow-md transition-colors"
+      >
+        <span class="font-medium">See More</span>
+        <span class="h-5 w-5">→</span> {/* Replaced ChevronRight icon */}
+      </a>
+    </div>
+  ) : (
+    // Pagination Links
+    <div class="mt-8 flex justify-between">
+      {/* Previous Page Link */}
+      {page > 1 ? (
+        <a
+          href={getPageUrl(page - 1)}
+          class="bg-muted hover:bg-muted/80 dark:bg-muted dark:hover:bg-muted/80 text-foreground dark:text-foreground rounded-md px-6 py-2 font-medium transition-colors"
+        >
+          « Prev
+        </a>
+      ) : <div />} {/* Empty div for spacing if no Prev link */}
+
+      {/* Next Page Link */}
+      {page < totalPages ? (
+        <a
+          href={getPageUrl(page + 1)}
+          class="bg-muted hover:bg-muted/80 dark:bg-muted dark:hover:bg-muted/80 text-foreground dark:text-foreground ml-auto rounded-md px-6 py-2 font-medium transition-colors"
+        >
+          Next »
+        </a>
+      ) : <div />} {/* Empty div for spacing if no Next link */}
+    </div>
+  )}
+</div>
+
+<script>
+  // Client-side script for click animation + navigation
+  document.querySelectorAll('.post-article').forEach(article => {
+    const link = article.querySelector('.post-link') as HTMLAnchorElement | null;
+    if (!link) return; // Skip if link not found
+
+    article.addEventListener('click', (e) => {
+      // We prevent default navigation in the link's onclick attribute
+      // Apply scaling class to the article
+      article.classList.add('scale-[0.98]');
+
+      // Navigate after a short delay for visual feedback
+      setTimeout(() => {
+        window.location.href = link.href; // Navigate to the link's URL
+      }, 150); // Delay in milliseconds
+    });
+  });
+</script>
