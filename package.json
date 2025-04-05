@@ -7,8 +7,9 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "format": "pnpm biome format --write ./src",
-    "lint": "pnpm biome lint --fix ./src"
+    "format": "pnpm biome format --write .",
+    "lint": "pnpm biome lint --fix .",
+    "prepare": "husky"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.2.3",
@@ -17,6 +18,14 @@
     "astro": "^5.6.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4"
+    "@biomejs/biome": "^1.9.4",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.0"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,mjs,cjs,json,md}": [
+      "pnpm format",
+      "pnpm lint"
+    ]
   }
 }
