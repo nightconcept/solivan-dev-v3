@@ -15,23 +15,9 @@ const config = {
       },
     },
     extend: {
-      typography: {
-        DEFAULT: {
-          css: {
-            maxWidth: "100%",
-            color: "var(--foreground)",
-            a: {
-              color: "var(--primary)",
-              "&:hover": {
-                color: "var(--primary)",
-              },
-            },
-          },
-        },
-      },
     },
   },
-  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
+  plugins: [],
 } satisfies Config;
 
 export default config;

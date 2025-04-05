@@ -54,12 +54,6 @@ const breadcrumbItems = [
 const pageDescription = entry.data.description || `Read the post: ${pageTitle}`;
 ---
 <BaseLayout title={`${pageTitle} | ${SITE_TITLE}`} description={pageDescription}>
-  {/* Keep prose-specific styles */}
-  <style is:global>
-    .prose .anchor-link { }
-    .prose .heading-link-icon { }
-  </style>
-
   <Breadcrumb items={breadcrumbItems} />
   <BlogPost pageTitle={pageTitle} Content={Content} />
 </BaseLayout>
