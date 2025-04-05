@@ -11,7 +11,6 @@ const allPosts = await getValidBlogPosts(); // Use the utility function
 // Get current page from URL query parameters, default to 1
 const { page } = Astro.props;
 const pageParam = page;
-console.log(`pageParam: ${page}`);
 const currentPage = Number.parseInt(pageParam || "1", 10);
 const validPage = Number.isNaN(currentPage) || currentPage < 1 ? 1 : currentPage;
 
