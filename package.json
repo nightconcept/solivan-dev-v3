@@ -33,7 +33,7 @@
     "vitest": "^3.1.1"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,mjs,cjs,json,md}": [
+    "*.{js,jsx,ts,tsx,mjs,cjs,json,md,astro}": [
       "pnpm format",
       "pnpm lint"
     ]
