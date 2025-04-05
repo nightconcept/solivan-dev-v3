@@ -1,5 +1,4 @@
 ---
-import type { CollectionEntry } from "astro:content";
 import FormattedDate from "./FormattedDate.astro";
 import { calculateReadTime, truncateDescription } from "../lib/utils";
 type Post = {
@@ -44,9 +43,9 @@ const hasMorePosts = totalPosts > postsPerPage && currentPosts.length > 0; // Ch
 
 // Helper function to generate correct pagination URLs
 const getPageUrl = (pageNum: number): string => {
-  if (pageNum <= 0) return "/blog"; // Safety check
-  if (pageNum === 1) return "/blog"; // Link to base blog page for page 1
-  return `/blog?page=${pageNum}`; // Use query param for other pages
+  if (pageNum <= 0) return "/blog";
+  if (pageNum === 1) return "/blog";
+  return `/blog?page=${pageNum}`;
 };
 ---
 
@@ -57,8 +56,7 @@ const getPageUrl = (pageNum: number): string => {
         data-slug={post.slug}
         class="post-article bg-card dark:bg-card cursor-pointer rounded-lg p-6 shadow-md transition-transform duration-300"
       >
-        {/* Wrap content in a link, but handle click via JS for animation */}
-        <a href={`/blog/${post.slug}`} class="post-link block" onclick="event.preventDefault();">
+        <a href={`/blog/${post.slug}`} class="post-link block">
           <h3 class="hover:text-primary/80 dark:hover:text-primary/80 mb-2 text-xl font-bold transition-colors">
             {post.title}
           </h3>
@@ -67,16 +65,13 @@ const getPageUrl = (pageNum: number): string => {
             {post.description || truncateDescription(post.body)}
           </p>
           <div class="text-muted-foreground dark:text-muted-foreground flex flex-wrap items-center text-sm">
-             {/* Use FormattedDate component with the 'date' field */}
             <FormattedDate date={post.date} />
             <span class="mx-2">•</span>
-            <span>{calculateReadTime(post.body ?? '')}</span> {/* Add read time */}
+            <span>{calculateReadTime(post.body ?? '')}</span>
             {post.author && (
               <>
                 <span class="mx-2">•</span>
                 <span>
-                  {/* Author is now always an array as per schema */}
-                  {/* Author is now a pre-formatted string */}
                   By {post.author}
                 </span>
               </>

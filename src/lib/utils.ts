@@ -40,12 +40,12 @@ export function stripMarkdown(markdown: string = ''): string {
   markdown = markdown.replace(/\n+/g, ' '); // Replace newlines with spaces
   markdown = markdown.replace(/\s{2,}/g, ' '); // Replace multiple spaces with single space
 
-  return markdown.trim(); // Trim leading/trailing whitespace
+  return markdown.trim();
 }
 
 // Helper function for word-aware truncation
 export function truncateDescription(text: string, maxLength: number = 150): string {
-  const strippedText = stripMarkdown(text); // Use the exported stripMarkdown
+  const strippedText = stripMarkdown(text);
   if (strippedText.length <= maxLength) {
     return strippedText;
   }
@@ -59,11 +59,11 @@ export function truncateDescription(text: string, maxLength: number = 150): stri
 // Calculate read time
 export function calculateReadTime(content: string): string {
   const wordsPerMinute = 200;
-  // Use stripped markdown for more accurate word count
-  const wordCount = stripMarkdown(content).split(/\s+/).length; // Use the exported stripMarkdown
+  const wordCount = stripMarkdown(content).split(/\s+/).length;
   const minutes = Math.ceil(wordCount / wordsPerMinute);
   return `${minutes} min read`;
 }
+
 // Define the expected shape of a validated post
 type ValidPost = {
   slug: string;
@@ -108,7 +108,7 @@ export async function getValidBlogPosts(limit?: number): Promise<Array<ValidPost
 
   // Apply limit if provided and positive
   if (limit && limit > 0) {
-    return sortedPosts.slice(0, limit+1);
+    return sortedPosts.slice(0, limit + 1);
   }
 
   return sortedPosts; // Return all sorted posts if no limit
