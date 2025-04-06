@@ -3,19 +3,15 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import ProfileCard from "../components/ProfileCard.astro";
 import BlogPostList from "../components/BlogPostList.astro";
 import { getValidBlogPosts } from "../lib/utils";
-import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
+import { SITE_TITLE, SITE_DESCRIPTION, SITE_HOME_POSTS_PER_PAGE } from "../consts";
 
-const POSTS_PER_PAGE = 3;
-const validPosts = await getValidBlogPosts(POSTS_PER_PAGE);
-
-// Page metadata using constants
-const title = SITE_TITLE;
-const description = SITE_DESCRIPTION;
+const validPosts = await getValidBlogPosts(SITE_HOME_POSTS_PER_PAGE);
 ---
-<BaseLayout title={title} description={description}>
+
+<BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
     <ProfileCard />
     <section class="mt-16" aria-labelledby="recent-posts-heading">
         <h2 id="recent-posts-heading" class="mb-8 text-2xl font-bold">Recent Posts</h2>
-        <BlogPostList posts={validPosts} postsPerPage={POSTS_PER_PAGE} showSeeMore={true} />
+        <BlogPostList posts={validPosts} postsPerPage={SITE_HOME_POSTS_PER_PAGE} showSeeMore={true} />
     </section>
 </BaseLayout>
