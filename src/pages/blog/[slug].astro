@@ -6,24 +6,32 @@ import { SITE_TITLE } from "../../consts";
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog");
-  // if post is valid
-  return posts.map((post) => ({
-    params: { slug: post.slug },
-    props: { post },
-  }));
+  // Filter out draft posts
+  return posts
+    .filter((post) => !post.data.draft) // Add this filter
+    .map((post) => ({
+      params: { slug: post.slug },
+      props: { post },
+    }));
   // else get 404
 }
 
 type Props = { post: CollectionEntry<"blog"> };
 
 const { post: entry } = Astro.props;
+
+// Return 404 if the post is a draft
+if (entry.data.draft) {
+  return new Response(null, { status: 404, statusText: "Not Found" });
+}
+
 const { slug } = Astro.params;
 const { Content } = await render(entry);
 
 const breadcrumbItems = [
   { label: "Home", href: "/" },
   { label: "Blog", href: "/blog" },
-  { label: entry.data.title, href: `/blog/${slug}` }, // Use post title for label
+  { label: entry.data.title, href: `/blog/${slug}` },
 ];
 ---
 <BaseLayout title={`${entry.data.title} | ${SITE_TITLE}`} description={entry.data.description || entry.data.title}>
