@@ -9,8 +9,6 @@ interface Props {
   title?: string;
   description?: string;
 }
-
-const { title = SITE_TITLE, description = SITE_DESCRIPTION } = Astro.props;
 ---
 
 <!DOCTYPE html>
@@ -18,8 +16,8 @@ const { title = SITE_TITLE, description = SITE_DESCRIPTION } = Astro.props;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{title}</title>
-    <meta name="description" content={description} />
+    <title>{SITE_TITLE}</title>
+    <meta name="description" content={SITE_DESCRIPTION} />
 
     {/* Favicon links */}
     <link rel="icon" href="/favicon.ico" sizes="any" />

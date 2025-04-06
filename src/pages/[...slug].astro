@@ -1,9 +1,8 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { SITE_DESCRIPTION } from "../consts";
-import { getCollection, type CollectionEntry } from "astro:content";
+import { getCollection } from "astro:content";
 
-// 1. Generate a path for every page in the `pages` collection
 export async function getStaticPaths() {
   const pages = await getCollection("pages");
   return pages.map((entry) => ({
@@ -12,20 +11,15 @@ export async function getStaticPaths() {
   }));
 }
 
-// 2. Get the entry for the current page from the prop
 const { entry } = Astro.props;
 const { slug } = Astro.params; // Keep slug for fallback title if needed
 
-// Astro should automatically handle 404s if the entry isn't found
-// based on getStaticPaths, but an explicit check can be added if needed.
 if (!entry) {
   return new Response(null, { status: 404, statusText: "Not Found" });
 }
 
-// 3. Render the entry's content
 const { Content } = await entry.render();
 
-// Use entry.data for frontmatter
 const fallbackTitle = slug.charAt(0).toUpperCase() + slug.slice(1);
 const pageTitle = entry.data.title || fallbackTitle;
 const pageDescription = entry.data.description || SITE_DESCRIPTION;

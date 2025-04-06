@@ -9,14 +9,14 @@ import { getValidBlogPosts } from "../../lib/utils";
 export async function getStaticPaths() {
   const validBlogPosts = await getValidBlogPosts();
   return validBlogPosts.map((entry) => {
-    // Map over the valid posts
     return {
-      // Add type hint for entry
       params: { slug: entry.slug },
+      props: { entry },
     };
   });
 }
 
+const { entry } = Astro.props;
 const { slug } = Astro.params;
 
 if (typeof slug !== "string") {
@@ -24,13 +24,12 @@ if (typeof slug !== "string") {
 }
 
 import { getEntry } from "astro:content";
-const entry = (await getEntry("blog", slug)) as CollectionEntry<"blog">; // Fetch and assert type
+const entry = (await getEntry("blog", slug)) as CollectionEntry<"blog">;
 
 if (!entry) {
   return new Response(null, { status: 404, statusText: "Not Found" });
 }
 
-// Add a check to ensure entry.render exists before calling it
 if (typeof entry.render !== "function") {
   console.error("Error: entry object does not have a render function. Entry:", entry);
   throw new Error(`Blog post entry for slug "${slug}" is invalid or missing the render method.`);
