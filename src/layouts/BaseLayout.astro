@@ -18,7 +18,7 @@ interface Props {
   headings?: Heading[];
 }
 
-const { headings = [] } = Astro.props;
+const { title, description = SITE_DESCRIPTION, headings = [] } = Astro.props;
 const showToc = headings.length > 0;
 ---
 
@@ -27,8 +27,8 @@ const showToc = headings.length > 0;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{SITE_TITLE}</title>
-    <meta name="description" content={SITE_DESCRIPTION} />
+    <title>{title || SITE_TITLE}</title>
+    <meta name="description" content={description} />
 
     {/* Favicon links */}
     <link rel="icon" href="/favicon.ico" sizes="any" />
