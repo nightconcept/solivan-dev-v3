@@ -1,0 +1,185 @@
+---
+// src/components/TableOfContents.astro
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  headings: Heading[];
+}
+
+const { headings } = Astro.props;
+
+// Filter headings to include only h2 and h3 (depth 2 and 3)
+const filteredHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
+
+// SVG Icons
+const ListIcon = `
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
+  <line x1="8" y1="6" x2="21" y2="6"></line>
+  <line x1="8" y1="12" x2="21" y2="12"></line>
+  <line x1="8" y1="18" x2="21" y2="18"></line>
+  <line x1="3" y1="6" x2="3.01" y2="6"></line>
+  <line x1="3" y1="12" x2="3.01" y2="12"></line>
+  <line x1="3" y1="18" x2="3.01" y2="18"></line>
+</svg>
+`;
+
+const ChevronRightIcon = `
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1 h-3 w-3 shrink-0">
+  <polyline points="9 18 15 12 9 6"></polyline>
+</svg>
+`;
+---
+
+{filteredHeadings.length > 0 && (
+  <div id="toc-container" class="fixed right-4 bottom-16 z-10 hidden"> {/* Initially hidden, script will show if space */}
+    {/* Wrapper for hover activation area */}
+    <div id="toc-wrapper" class="relative p-2"> {/* Added padding for larger hover area */}
+      <button
+        type="button"
+        id="toc-button"
+        class="bg-surface dark:bg-surface-dark text-on-surface dark:text-on-surface-dark rounded-full p-3 shadow-md transition-shadow hover:shadow-lg opacity-70 data-[is-open=true]:opacity-100 block" /* Added block display */
+        aria-label="Table of contents"
+        aria-expanded="false"
+      >
+        <Fragment set:html={ListIcon} />
+      </button>
+
+      {/* Adjusted menu position relative to wrapper */}
+      <div id="toc-menu" class="absolute right-0 bottom-full mb-2 z-20 hidden data-[is-open=true]:block">
+        <div
+          class="bg-surface dark:bg-surface-dark max-w-[250px] min-w-[200px] rounded-lg p-4 shadow-lg"
+        >
+          <h4 class="text-on-surface-variant dark:text-on-surface-variant-dark mb-2 text-sm font-medium">
+            TABLE OF CONTENTS
+          </h4>
+          <nav>
+            <ul class="space-y-2">
+              {filteredHeadings.map((heading) => (
+                <li
+                  class:list={[
+                    "text-sm",
+                    { "ml-3": heading.depth > 2 } // Indent h3
+                  ]}
+                >
+                  <a
+                    href={`#${heading.slug}`}
+                    class="text-on-surface dark:text-on-surface-dark hover:text-primary dark:hover:text-primary-dark flex items-center transition-colors toc-link"
+                  >
+                    <Fragment set:html={ChevronRightIcon} />
+                    <span class="line-clamp-1">{heading.text}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div> {/* End toc-wrapper */}
+    {/* Overlay for closing */}
+    <div id="toc-overlay" class="fixed inset-0 z-10 hidden data-[is-open=true]:block"></div>
+  </div>
+)}
+
+<script>
+  // src/components/TableOfContents.astro <script>
+  // Declare variables in the outer scope
+  // Declare variables in the outer scope
+  let tocContainer: HTMLElement | null = null;
+  let tocWrapper: HTMLElement | null = null; // Added wrapper
+  let tocButton: HTMLElement | null = null;
+  let tocMenu: HTMLElement | null = null;
+  let tocOverlay: HTMLElement | null = null;
+  let tocLinks: NodeListOf<Element> | null = null;
+
+  let isOpen = false;
+  let hasSpace = false;
+
+  // Removed console logs
+
+  function checkSpace() {
+    const windowWidth = window.innerWidth;
+    const oldHasSpace = hasSpace;
+    hasSpace = windowWidth > 1024; // Keep the 1024px breakpoint
+    if (tocContainer) {
+      if (hasSpace) {
+        tocContainer.classList.remove('hidden');
+      } else {
+        tocContainer.classList.add('hidden');
+        // Ensure menu is closed if space becomes insufficient
+        if (oldHasSpace && !hasSpace) {
+             setIsOpen(false);
+        }
+      }
+    }
+  }
+
+  function setIsOpen(open: boolean) {
+    isOpen = open;
+    if (tocButton) {
+      tocButton.setAttribute('aria-expanded', String(isOpen));
+      tocButton.dataset.isOpen = String(isOpen); // Use data attribute for styling
+    }
+    if (tocMenu) {
+      tocMenu.dataset.isOpen = String(isOpen); // Use data attribute for styling
+    }
+    if (tocOverlay) {
+      tocOverlay.dataset.isOpen = String(isOpen); // Use data attribute for styling
+    }
+  }
+
+  function toggleOpen(event: MouseEvent) {
+    event.stopPropagation(); // Prevent event from bubbling up
+    setIsOpen(!isOpen);
+  }
+
+  function closeMenu() {
+    setIsOpen(false);
+  }
+
+  // Initial check and setup
+  // Use DOMContentLoaded to ensure elements are available
+  document.addEventListener('DOMContentLoaded', () => {
+    // Assign elements to the variables declared outside
+    tocContainer = document.getElementById('toc-container');
+    tocWrapper = document.getElementById('toc-wrapper'); // Assign wrapper
+    tocButton = document.getElementById('toc-button');
+    tocMenu = document.getElementById('toc-menu');
+    tocOverlay = document.getElementById('toc-overlay');
+    tocLinks = document.querySelectorAll('.toc-link');
+
+    // Check for wrapper as well
+    if (tocContainer && tocWrapper && tocButton && tocMenu && tocOverlay) {
+      checkSpace(); // Initial space check
+
+      // Hover listeners on the wrapper
+      tocWrapper.addEventListener('mouseenter', () => setIsOpen(true));
+      tocWrapper.addEventListener('mouseleave', () => setIsOpen(false));
+
+      // Click listener still on the button
+      tocButton.addEventListener('click', toggleOpen);
+
+      // Click on overlay closes (ensure it's added)
+      tocOverlay.addEventListener('click', closeMenu);
+
+      // Close menu when a link inside is clicked
+      tocLinks.forEach(link => {
+        link.addEventListener('click', closeMenu);
+      });
+
+      // Prevent clicks inside the menu from closing it (event propagation)
+      tocMenu.addEventListener('click', (event) => {
+        event.stopPropagation();
+      });
+
+      // Re-check space on resize
+      window.addEventListener('resize', checkSpace);
+
+    } else {
+       console.error("TOC Script: One or more elements (container, wrapper, button, menu, overlay) not found.");
+    }
+  });
+</script>

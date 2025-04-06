@@ -1,5 +1,5 @@
 ---
-import { type CollectionEntry, render, getCollection } from "astro:content";
+import { type CollectionEntry, getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumb from "../../components/Breadcrumb.astro";
 import { SITE_TITLE } from "../../consts";
@@ -26,7 +26,7 @@ if (entry.data.draft) {
 }
 
 const { slug } = Astro.params;
-const { Content } = await render(entry);
+const { Content, headings } = await entry.render();
 
 const breadcrumbItems = [
   { label: "Home", href: "/" },
@@ -34,7 +34,7 @@ const breadcrumbItems = [
   { label: entry.data.title, href: `/blog/${slug}` },
 ];
 ---
-<BaseLayout title={`${entry.data.title} | ${SITE_TITLE}`} description={entry.data.description || entry.data.title}>
+<BaseLayout title={`${entry.data.title} | ${SITE_TITLE}`} description={entry.data.description || entry.data.title} headings={headings}>
   <Breadcrumb items={breadcrumbItems} />
   <article class="relative mt-8">
     <h1 class="mb-8 text-3xl font-bold">{entry.data.title}</h1>

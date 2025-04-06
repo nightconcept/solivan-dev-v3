@@ -3,12 +3,23 @@
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import ThemeToggle from "../components/ThemeToggle.astro";
+import TableOfContents from "../components/TableOfContents.astro";
 import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
+
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
 
 interface Props {
   title?: string;
   description?: string;
+  headings?: Heading[];
 }
+
+const { headings = [] } = Astro.props;
+const showToc = headings.length > 0;
 ---
 
 <!DOCTYPE html>
@@ -49,5 +60,8 @@ interface Props {
 
         <Footer />
     </div>
+
+    {showToc && <TableOfContents headings={headings} />}
+
 </body>
 </html>
