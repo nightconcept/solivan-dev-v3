@@ -148,7 +148,7 @@ export async function getValidBlogPosts(limit?: number): Promise<Array<ValidPost
       }
 
       return {
-        slug: post.id, // TODO: Consolidate these varying names
+        slug: post.id.replace(/\.mdx?$/, ''), // Remove .md or .mdx extension
         title: post.data.title ?? "Untitled Post", // Provide default
         description: post.data.description ?? "", // Provide default for description
         date: post.data.date, // Already validated by filter
