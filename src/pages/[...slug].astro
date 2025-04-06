@@ -12,19 +12,19 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props;
-const { slug } = Astro.params; // Keep slug for fallback title if needed
+const { slug } = Astro.params;
 
 if (!entry) {
   return new Response(null, { status: 404, statusText: "Not Found" });
 }
 
-const { Content } = await entry.render();
+const { Content, headings } = await entry.render();
 
 const fallbackTitle = slug.charAt(0).toUpperCase() + slug.slice(1);
 const pageTitle = entry.data.title || fallbackTitle;
 const pageDescription = entry.data.description || SITE_DESCRIPTION;
 ---
-<BaseLayout title={pageTitle} description={pageDescription}>
+<BaseLayout title={pageTitle} description={pageDescription} headings={headings}>
   <article class="prose dark:prose-invert max-w-none">
     <h1>{pageTitle}</h1>
     <Content />
