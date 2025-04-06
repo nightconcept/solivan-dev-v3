@@ -1,52 +1,36 @@
 ---
-import type { CollectionEntry } from "astro:content";
+import { type CollectionEntry, render, getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumb from "../../components/Breadcrumb.astro";
 import { SITE_TITLE } from "../../consts";
-import BlogPost from "../../components/BlogPost.astro";
-import { getValidBlogPosts } from "../../lib/utils";
 
 export async function getStaticPaths() {
-  const validBlogPosts = await getValidBlogPosts();
-  return validBlogPosts.map((entry) => {
-    return {
-      params: { slug: entry.slug },
-      props: { entry },
-    };
-  });
+  const posts = await getCollection("blog");
+  // if post is valid
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+  // else get 404
 }
+type Props = CollectionEntry<"blog">;
 
-const { entry } = Astro.props;
+const post = Astro.props;
 const { slug } = Astro.params;
-
-if (typeof slug !== "string") {
-  throw new Error(`Expected slug to be a string, but received: ${slug}`);
-}
-
-import { getEntry } from "astro:content";
-const entry = (await getEntry("blog", slug)) as CollectionEntry<"blog">;
-
-if (!entry) {
-  return new Response(null, { status: 404, statusText: "Not Found" });
-}
-
-if (typeof entry.render !== "function") {
-  console.error("Error: entry object does not have a render function. Entry:", entry);
-  throw new Error(`Blog post entry for slug "${slug}" is invalid or missing the render method.`);
-}
-const { Content } = await entry.render();
-
-const pageTitle = entry.data.title || slug.charAt(0).toUpperCase() + slug.slice(1);
+const { Content } = await render(post);
 
 const breadcrumbItems = [
   { label: "Home", href: "/" },
   { label: "Blog", href: "/blog" },
-  { label: pageTitle, href: `/blog/${slug}` }, // Use slug from params
+  { label: slug, href: `/blog/${slug}` },
 ];
-
-const pageDescription = entry.data.description || `Read the post: ${pageTitle}`;
 ---
-<BaseLayout title={`${pageTitle} | ${SITE_TITLE}`} description={pageDescription}>
+<BaseLayout title={`${slug} | ${SITE_TITLE}`} description={slug}>
   <Breadcrumb items={breadcrumbItems} />
-  <BlogPost pageTitle={pageTitle} Content={Content} />
+  <article class="relative mt-8">
+    <h1 class="mb-8 text-3xl font-bold">{slug}</h1>
+    <div>
+      <Content />
+    </div>
+  </article>
 </BaseLayout>

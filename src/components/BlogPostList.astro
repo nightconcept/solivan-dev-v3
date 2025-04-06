@@ -55,7 +55,6 @@ const getPageUrl = (pageNum: number): string => {
             {post.title}
           </h3>
           <p class="text-card-foreground dark:text-card-foreground mb-4">
-            {/* Use description or fallback to word-aware truncated body */}
             {post.description || truncateDescription(post.body)}
           </p>
           <div class="text-muted-foreground dark:text-muted-foreground flex flex-wrap items-center text-sm">
