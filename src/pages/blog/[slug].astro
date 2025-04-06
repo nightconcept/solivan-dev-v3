@@ -1,65 +1,37 @@
 ---
-import type { CollectionEntry } from "astro:content"; // Keep type import if needed elsewhere
-import BaseLayout from "../../layouts/BaseLayout.astro"; // Import BaseLayout
+import { type CollectionEntry, render, getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumb from "../../components/Breadcrumb.astro";
 import { SITE_TITLE } from "../../consts";
-import BlogPost from "../../components/BlogPost.astro"; // Import the new component
-import { getValidBlogPosts } from "../../lib/utils"; // Import the utility function
 
-// 1. Generate a path for each markdown file in src/content/blog
 export async function getStaticPaths() {
-  const validBlogPosts = await getValidBlogPosts(); // Use the utility function
-  return validBlogPosts.map((entry) => {
-    // Map over the valid posts
-    // Logging can be kept if useful, but ensure it uses the correct fields from getValidBlogPosts
-    // console.log(`Processing entry: Slug=${entry.slug}`);
-    // No need to check for missing slug if getValidBlogPosts guarantees it
-    return {
-      // Add type hint for entry
-      params: { slug: entry.slug }, // slug is guaranteed by getValidBlogPosts
-      // No props needed, just the params for routing
-    };
-  });
+  const posts = await getCollection("blog");
+  // if post is valid
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+  // else get 404
 }
 
-// 2. Get the slug from URL parameters
+type Props = { post: CollectionEntry<"blog"> };
+
+const { post: entry } = Astro.props;
 const { slug } = Astro.params;
-
-// Add a check to ensure slug is defined (should always be true due to getStaticPaths)
-if (typeof slug !== "string") {
-  throw new Error(`Expected slug to be a string, but received: ${slug}`);
-}
-
-// 3. Fetch the full blog entry using the slug
-import { getEntry } from "astro:content";
-const entry = (await getEntry("blog", slug)) as CollectionEntry<"blog">; // Fetch and assert type
-
-// 4. Handle cases where the entry wasn't found (though getStaticPaths should prevent this)
-if (!entry) {
-  return new Response(null, { status: 404, statusText: "Not Found" });
-}
-
-// 5. Render the content using the fetched entry
-// Add a check to ensure entry.render exists before calling it
-if (typeof entry.render !== "function") {
-  console.error("Error: entry object does not have a render function. Entry:", entry);
-  // Throw a more specific error to differentiate from other potential issues
-  throw new Error(`Blog post entry for slug "${slug}" is invalid or missing the render method.`);
-}
-const { Content } = await entry.render();
-
-// Capitalize the page slug for the breadcrumb label if title is missing (fallback)
-const pageTitle = entry.data.title || slug.charAt(0).toUpperCase() + slug.slice(1); // Use slug from params (already checked)
+const { Content } = await render(entry);
 
 const breadcrumbItems = [
   { label: "Home", href: "/" },
   { label: "Blog", href: "/blog" },
-  { label: pageTitle, href: `/blog/${slug}` }, // Use slug from params
+  { label: entry.data.title, href: `/blog/${slug}` }, // Use post title for label
 ];
-
-const pageDescription = entry.data.description || `Read the post: ${pageTitle}`;
 ---
-<BaseLayout title={`${pageTitle} | ${SITE_TITLE}`} description={pageDescription}>
+<BaseLayout title={`${entry.data.title} | ${SITE_TITLE}`} description={entry.data.description || entry.data.title}>
   <Breadcrumb items={breadcrumbItems} />
-  <BlogPost pageTitle={pageTitle} Content={Content} />
+  <article class="relative mt-8">
+    <h1 class="mb-8 text-3xl font-bold">{entry.data.title}</h1>
+    <div class="prose dark:prose-invert lg:prose-lg prose-headings:scroll-mt-20 prose-headings:relative prose-headings:group prose-a:text-primary hover:prose-a:text-primary/80 max-w-none">
+      <Content />
+    </div>
+  </article>
 </BaseLayout>

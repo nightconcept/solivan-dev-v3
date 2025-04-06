@@ -1,23 +1,20 @@
-import { glob } from "astro/loaders";
 import { defineCollection, z } from "astro:content";
 
 const blog = defineCollection({
-  // Type-check frontmatter using a schema
   schema: z.object({
     title: z.string(),
-    description: z.string().optional(), // Made optional as it can be empty
-    // Use 'date' and 'lastmod' to match the markdown frontmatter
-    date: z.coerce.date(), // Primary publication date
-    lastmod: z.coerce.date().optional(), // Last modification date
-    author: z.array(z.string()).optional(), // Array of authors
+    description: z.string().optional(),
+    date: z.coerce.date(),
+    lastmod: z.coerce.date().optional(),
+    author: z.array(z.string()).optional(),
     categories: z.array(z.string()).optional(),
     tags: z.array(z.string()).optional(),
-    weight: z.number().nullable().optional(), // Allow number, null, or undefined
-    slug: z.string().optional(), // Optional slug override
-    draft: z.boolean().default(false), // Default to not draft
+    weight: z.number().nullable().optional(),
+    slug: z.string().optional(),
+    draft: z.boolean().default(false),
     comments: z.boolean().optional().default(true),
     showToc: z.boolean().optional().default(true),
-    TocOpen: z.boolean().optional().default(false), // Default to closed TOC
+    TocOpen: z.boolean().optional().default(false),
     hidemeta: z.boolean().optional().default(false),
     disableShare: z.boolean().optional().default(true),
     showbreadcrumbs: z.boolean().optional().default(true),
@@ -27,9 +24,35 @@ const blog = defineCollection({
         alt: z.string().optional(),
         relative: z.boolean().optional(),
       }).optional(),
-    // Keep heroImage if it's used elsewhere, or remove if cover.image replaces it
-    heroImage: z.string().optional(), // Assuming this might still be used or was legacy
+    heroImage: z.string().optional(),
   }),
 });
 
-export const collections = { blog };
+const pages = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    description: z.string().optional(),
+    date: z.coerce.date().optional(),
+    lastmod: z.coerce.date().optional(),
+    author: z.array(z.string()).optional(),
+    draft: z.boolean().optional(),
+    showToc: z.boolean().optional(),
+    summary: z.string().optional(),
+    weight: z.number().nullable().optional(),
+    slug: z.string().optional(),
+    comments: z.boolean().optional(),
+    TocOpen: z.boolean().optional(),
+    hidemeta: z.boolean().optional(),
+    disableShare: z.boolean().optional(),
+    showbreadcrumbs: z.boolean().optional(),
+    cover: z.object({
+        image: z.string().optional(),
+        caption: z.string().optional(),
+        alt: z.string().optional(),
+        relative: z.boolean().optional(),
+      }).optional(),
+  }),
+});
+
+export const collections = { blog, pages };

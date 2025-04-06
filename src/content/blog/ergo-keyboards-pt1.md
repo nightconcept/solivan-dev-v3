@@ -38,8 +38,7 @@ help me.
 
 ## The Requirements
 
-I stumbled upon Reddit's
-(r/ergomechkeyboards)[https://www.reddit.com/r/ErgoMechKeyboards/] community to
+I stumbled upon Reddit's [r/ergomechkeyboards](https://www.reddit.com/r/ErgoMechKeyboards/) community to
 see what keybards were available. I had spent some time previously looking at
 just regular mechanical keyboards, but I stopped when I realized I _hated_
 putting in o-rings. I immediately stopped considering new keyboards altogether.
