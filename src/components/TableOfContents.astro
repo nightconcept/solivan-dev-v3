@@ -41,7 +41,7 @@ const ChevronRightIcon = `
       <button
         type="button"
         id="toc-button"
-        class="bg-surface dark:bg-surface-dark text-on-surface dark:text-on-surface-dark rounded-full p-3 shadow-md transition-shadow hover:shadow-lg opacity-70 data-[is-open=true]:opacity-100 block" /* Added block display */
+        class="bg-surface dark:bg-surface-dark text-on-surface dark:text-on-surface-dark rounded-full p-3 shadow-md transition-shadow hover:shadow-lg opacity-70 data-[is-open=true]:opacity-100 block"
         aria-label="Table of contents"
         aria-expanded="false"
       >
@@ -157,18 +157,13 @@ const ChevronRightIcon = `
 
       // Hover listeners on the wrapper
       tocWrapper.addEventListener('mouseenter', () => setIsOpen(true));
-      tocWrapper.addEventListener('mouseleave', () => setIsOpen(false));
 
       // Click listener still on the button
-      tocButton.addEventListener('click', toggleOpen);
 
       // Click on overlay closes (ensure it's added)
       tocOverlay.addEventListener('click', closeMenu);
 
       // Close menu when a link inside is clicked
-      tocLinks.forEach(link => {
-        link.addEventListener('click', closeMenu);
-      });
 
       // Prevent clicks inside the menu from closing it (event propagation)
       tocMenu.addEventListener('click', (event) => {
