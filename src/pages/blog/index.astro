@@ -1,25 +1,15 @@
 ---
-import BaseLayout from "../../layouts/BaseLayout.astro"; // Import BaseLayout
-import BlogPostList from "../../components/BlogPostList.astro"; // Keep BlogPostList import
-import { getValidBlogPosts } from "../../lib/utils"; // Import the utility function
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import BlogPostList from "../../components/BlogPostList.astro";
+import { getValidBlogPosts } from "../../lib/utils";
 
-// Number of posts to display per page on the blog index
-const POSTS_PER_PAGE = 10;
+const allPosts = await getValidBlogPosts();
 
-const allPosts = await getValidBlogPosts(); // Use the utility function
-
-// Get current page from URL query parameters, default to 1
-const { page } = Astro.props;
-const pageParam = page;
-const currentPage = Number.parseInt(pageParam || "1", 10);
-const validPage = Number.isNaN(currentPage) || currentPage < 1 ? 1 : currentPage;
-
-// Define page metadata (adjust title as needed)
 const pageTitle = "Blog Posts";
 const pageDescription = "Read the latest articles from the blog.";
 ---
 <BaseLayout title={pageTitle} description={pageDescription}>
   <h1 class="mb-8 text-3xl font-bold">{pageTitle}</h1>
-  <BlogPostList posts={allPosts} page={validPage} postsPerPage={POSTS_PER_PAGE} />
+  <BlogPostList posts={allPosts} />
 </BaseLayout>
 </html>
