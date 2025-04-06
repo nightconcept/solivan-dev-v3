@@ -11,7 +11,11 @@ import { getCollection, type CollectionEntry } from "astro:content";
  */
 export function stripMarkdown(markdown: string = ''): string {
   // Remove HTML tags (basic)
-  markdown = markdown.replace(/<[^>]*>/g, '');
+  let previous;
+  do {
+    previous = markdown;
+    markdown = markdown.replace(/<[^>]*>/g, '');
+  } while (markdown !== previous);
 
   // Remove code blocks first (multi-line)
   markdown = markdown.replace(/```[\s\S]*?```/g, '');
