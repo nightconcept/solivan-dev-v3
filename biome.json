@@ -3,7 +3,7 @@
   "vcs": {
     "enabled": false,
     "clientKind": "git",
-    "useIgnoreFile": false
+    "useIgnoreFile": true
   },
   "files": {
     "ignoreUnknown": false,
@@ -12,7 +12,7 @@
   },
   "formatter": {
     "enabled": true,
-    "lineWidth": 100,
+    "lineWidth": 120,
     "indentStyle": "space"
   },
   "organizeImports": {
@@ -21,12 +21,38 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true
+      "recommended": true,
+      "correctness": {
+        "noNewSymbol": "error",
+        "noUndeclaredVariables": "error",
+        "noUnusedPrivateClassMembers": "error"
+      },
+      "style": {
+        "noNegationElse": "error",
+        "useBlockStatements": "error",
+        "useConsistentArrayType": "error",
+        "useEnumInitializers": "off",
+        "useForOf": "error",
+        "useNodeAssertStrict": "error",
+        "useShorthandAssign": "error"
+      },
+      "suspicious": {
+        "noEmptyBlockStatements": "error"
+      }
     }
   },
   "javascript": {
     "formatter": {
-      "quoteStyle": "double"
+      "quoteStyle": "double",
+      "semicolons": "always"
     }
-  }
+  },
+  "overrides": [
+    {
+      "include": ["package.json"],
+      "formatter": {
+        "lineWidth": 1
+      }
+    }
+  ]
 }

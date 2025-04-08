@@ -41,9 +41,6 @@
     "vitest-dom": "^0.1.1"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,mjs,cjs,json,md,astro}": [
-      "pnpm format",
-      "pnpm lint"
-    ]
+    "*.{js,jsx,ts,tsx,mjs,cjs,json,md,astro}": ["pnpm format", "pnpm lint"]
   }
 }
