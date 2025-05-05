@@ -1,5 +1,9 @@
 # solivan-dev-v3
 
+![License](https://img.shields.io/github/license/nightconcept/almandine)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/nightconcept/solivan-dev-v3/ci.yml)
+[![Coverage Status](https://coveralls.io/repos/github/nightconcept/solivan-dev-v3/badge.svg)](https://coveralls.io/github/nightconcept/solivan-dev-v3)
+![GitHub last commit](https://img.shields.io/github/last-commit/nightconcept/solivan-dev-v3)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/nightconcept/astro-solivan-dev-v3/badge)](https://scorecard.dev/viewer/?uri=github.com/nightconcept/astro-solivan-dev-v3)
 
 Personal website and blog using:
