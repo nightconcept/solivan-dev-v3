@@ -23,7 +23,7 @@ export default getViteConfig ({
       // Include source files for coverage, adjust pattern as needed
       coverage: {
         provider: 'v8',
-        reporter: ['text', 'json', 'html'],
+        reporter: ['text', 'json', 'html', 'lcov'],
         include: ['src/components/FormattedDate.astro'], // Focus coverage on the target component
         exclude: [
           'src/env.d.ts',
