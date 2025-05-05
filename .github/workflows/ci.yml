@@ -54,6 +54,11 @@ jobs:
       - name: Run Unit Tests
         run: pnpm run test:unit --run
 
+      - name: Coveralls GitHub Action
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Install Playwright Browsers
         run: pnpm exec playwright install --with-deps
 
