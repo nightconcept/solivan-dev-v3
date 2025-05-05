@@ -1,6 +1,6 @@
 # solivan-dev-v3
 
-[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/{owner}/{repo}/badge)](https://scorecard.dev/viewer/?uri=github.com/{owner}/{repo})
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/nightconcept/astro-solivan-dev-v3/badge)](https://scorecard.dev/viewer/?uri=github.com/nightconcept/astro-solivan-dev-v3)
 
 Personal website and blog using:
 
