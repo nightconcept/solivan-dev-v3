@@ -52,7 +52,7 @@ jobs:
         run: pnpm run lint
 
       - name: Run Unit Tests
-        run: pnpm run test:unit --run
+        run: pnpm run test:coverage
 
       - name: Coveralls GitHub Action
         uses: coverallsapp/github-action@v2
