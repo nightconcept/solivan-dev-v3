@@ -34,3 +34,6 @@ pnpm-debug.log*
 /blob-report/
 /playwright/.cache/
 /coverage/
+
+# vercel stuff
+.vercel/
