@@ -11,7 +11,7 @@ tags:
 description: ''
 weight: # 1 means pin the article, sort articles according to this number
 slug: ''
-draft: false # draft or not
+draft: true # draft or not
 comments: true
 showToc: false # show contents
 TocOpen: false # open contents automantically
