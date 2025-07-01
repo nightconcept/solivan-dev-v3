@@ -1,5 +1,5 @@
 ---
-title: building-a-new-language
+title: Building a New Language
 date: 2025-06-30T14:16:56-07:00
 lastmod: 2025-06-30T14:16:56-07:00
 author: ['Danny']
