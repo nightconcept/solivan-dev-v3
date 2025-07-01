@@ -13,4 +13,8 @@
       install.enable = true;
     };
   };
+  languages.python = {
+    enable = true;
+    package = pkgs.python312;
+  };
 }
