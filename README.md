@@ -31,3 +31,7 @@ app/templates/blog.md as a template):
 ```
 pnpm blog "Cool new post"
 ```
+
+## License
+
+The blog source code is licensed under the [MIT License](LICENSE) and the blog contents located in `src/content/` are licensed under [CC-BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) license.
