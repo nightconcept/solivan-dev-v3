@@ -213,9 +213,9 @@ describe('Utils', () => {
 
     it('should handle undefined or array author', async () => {
       (getCollection as Mock).mockResolvedValue([
-        { id: 'post1', data: { title: 'Post 1', date: new Date(), author: undefined }, body: 'body1' },
-        { id: 'post2', data: { title: 'Post 2', date: new Date(), author: ['Author A', 'Author B'] }, body: 'body2' },
-        { id: 'post3', data: { title: 'Post 3', date: new Date(), author: 'Author C' }, body: 'body3' },
+        { id: 'post1', data: { title: 'Post 1', date: new Date('2023-01-03'), author: undefined }, body: 'body1' },
+        { id: 'post2', data: { title: 'Post 2', date: new Date('2023-01-02'), author: ['Author A', 'Author B'] }, body: 'body2' },
+        { id: 'post3', data: { title: 'Post 3', date: new Date('2023-01-01'), author: 'Author C' }, body: 'body3' },
       ]);
       const posts = await getValidBlogPosts();
       expect(posts.length).toBe(3);
