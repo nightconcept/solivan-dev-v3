@@ -1,8 +1,8 @@
-import { unified } from "unified";
-import remarkParse from "remark-parse";
-import { visit } from "unist-util-visit";
-import Slugger from "github-slugger";
 import type { Heading, Root, Text } from "@types/mdast";
+import Slugger from "github-slugger";
+import remarkParse from "remark-parse";
+import { unified } from "unified";
+import { visit } from "unist-util-visit";
 
 // Define the structure for each TOC item
 export interface TOCItem {
@@ -16,9 +16,7 @@ export interface TOCItem {
  * @param markdownContent The raw markdown string.
  * @returns A promise that resolves to an array of TOCItem objects.
  */
-export async function extractHeadings(
-  markdownContent: string,
-): Promise<TOCItem[]> {
+export async function extractHeadings(markdownContent: string): Promise<TOCItem[]> {
   const headings: TOCItem[] = [];
   const slugger = new Slugger(); // Initialize slugger for generating unique IDs
 

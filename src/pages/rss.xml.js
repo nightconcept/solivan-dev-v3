@@ -1,6 +1,6 @@
 import rss from "@astrojs/rss";
-import { getValidBlogPosts } from "../lib/utils"; // Import the utility function
 import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
+import { getValidBlogPosts } from "../lib/utils"; // Import the utility function
 
 export async function GET(context) {
   const posts = await getValidBlogPosts(); // Use the utility function

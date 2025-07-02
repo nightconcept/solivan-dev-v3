@@ -1,9 +1,9 @@
 ---
+import { SITE_DESCRIPTION, SITE_HOME_POSTS_PER_PAGE, SITE_TITLE } from "../consts";
+import { getValidBlogPosts } from "../lib/utils";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ProfileCard from "../components/ProfileCard.astro";
 import BlogPostList from "../components/BlogPostList.astro";
-import { getValidBlogPosts } from "../lib/utils";
-import { SITE_TITLE, SITE_DESCRIPTION, SITE_HOME_POSTS_PER_PAGE } from "../consts";
 
 const validPosts = await getValidBlogPosts(SITE_HOME_POSTS_PER_PAGE);
 ---

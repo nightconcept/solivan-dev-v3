@@ -1,4 +1,4 @@
-import { getCollection, type CollectionEntry } from "astro:content";
+import { type CollectionEntry, getCollection } from "astro:content";
 
 /**
  * Helper function to strip Markdown formatting from a string.
@@ -9,54 +9,54 @@ import { getCollection, type CollectionEntry } from "astro:content";
  * @param {string} [markdown=''] - The Markdown string to strip. Defaults to an empty string.
  * @returns {string} The stripped text with Markdown formatting removed.
  */
-export function stripMarkdown(markdown: string = ''): string {
+export function stripMarkdown(markdown: string = ""): string {
   // Remove HTML tags (basic)
-  let previous;
+  let previous: string;
   do {
     previous = markdown;
-    markdown = markdown.replace(/<[^>]*>/g, '');
+    markdown = markdown.replace(/<[^>]*>/g, "");
   } while (markdown !== previous);
 
   // Remove code blocks first (multi-line)
-  markdown = markdown.replace(/```[\s\S]*?```/g, '');
-  markdown = markdown.replace(/~~~[\s\S]*?~~~/g, '');
+  markdown = markdown.replace(/```[\s\S]*?```/g, "");
+  markdown = markdown.replace(/~~~[\s\S]*?~~~/g, "");
 
   // Remove extra whitespace and newlines (initial pass for line-based regexes)
-  markdown = markdown.replace(/\r\n/g, '\n'); // Normalize line endings
-  markdown = markdown.trim().replace(/^[ \t]+/gm, ''); // Remove leading space/tab per line
+  markdown = markdown.replace(/\r\n/g, "\n"); // Normalize line endings
+  markdown = markdown.trim().replace(/^[ \t]+/gm, ""); // Remove leading space/tab per line
 
   // Remove headers (entire line)
-  markdown = markdown.replace(/^#+\s+.*$/gm, ''); // Remove full-line headers
-  markdown = markdown.replace(/(?<!^)\s*#+\s+\S+/g, ' '); // Remove inline headers (e.g., "text # Header") and replace with a space
+  markdown = markdown.replace(/^#+\s+.*$/gm, ""); // Remove full-line headers
+  markdown = markdown.replace(/(?<!^)\s*#+\s+\S+/g, " "); // Remove inline headers (e.g., "text # Header") and replace with a space
 
   // Remove horizontal rules
-  markdown = markdown.replace(/(\s|^)(\*|-|_){3,}(\s|$)/gm, ' '); // Remove HRs, replacing with a space
+  markdown = markdown.replace(/(\s|^)(\*|-|_){3,}(\s|$)/gm, " "); // Remove HRs, replacing with a space
 
   // Remove blockquotes marker
-  markdown = markdown.replace(/^>\s?/gm, ''); // Remove blockquote marker only (at line start)
+  markdown = markdown.replace(/^>\s?/gm, ""); // Remove blockquote marker only (at line start)
 
   // Remove list markers
-  markdown = markdown.replace(/^[\*\-\+]\s+/gm, ''); // Remove unordered list marker only (at line start)
-  markdown = markdown.replace(/^\d+\.\s+/gm, '');   // Remove ordered list marker only (at line start)
+  markdown = markdown.replace(/^[*\-+]\s+/gm, ""); // Remove unordered list marker only (at line start)
+  markdown = markdown.replace(/^\d+\.\s+/gm, ""); // Remove ordered list marker only (at line start)
 
   // Remove images
-  markdown = markdown.replace(/!\[.*?\]\(.*?\)/g, ' '); // Standard image tags, replace with space
-  markdown = markdown.replace(/^!.*$/gm, ''); // Lines starting with ! (for the specific test case)
+  markdown = markdown.replace(/!\[.*?\]\(.*?\)/g, " "); // Standard image tags, replace with space
+  markdown = markdown.replace(/^!.*$/gm, ""); // Lines starting with ! (for the specific test case)
 
   // Remove links, keeping the text
-  markdown = markdown.replace(/\[(.*?)\]\(.*?\)/g, '$1');
+  markdown = markdown.replace(/\[(.*?)\]\(.*?\)/g, "$1");
 
   // Remove bold/italics/strikethrough
-  markdown = markdown.replace(/(\*\*|__)(.*?)\1/g, '$2'); // Bold
-  markdown = markdown.replace(/(\*|_)(.*?)\1/g, '$2');   // Italics
-  markdown = markdown.replace(/~~(.*?)~~/g, '$1');      // Strikethrough
+  markdown = markdown.replace(/(\*\*|__)(.*?)\1/g, "$2"); // Bold
+  markdown = markdown.replace(/(\*|_)(.*?)\1/g, "$2"); // Italics
+  markdown = markdown.replace(/~~(.*?)~~/g, "$1"); // Strikethrough
 
   // Remove inline code
-  markdown = markdown.replace(/`([^`]+)`/g, '$1');
+  markdown = markdown.replace(/`([^`]+)`/g, "$1");
 
   // Remove extra whitespace and newlines
-  markdown = markdown.replace(/\n+/g, ' '); // Replace newlines with spaces
-  markdown = markdown.replace(/\s{2,}/g, ' '); // Replace multiple spaces with single space
+  markdown = markdown.replace(/\n+/g, " "); // Replace newlines with spaces
+  markdown = markdown.replace(/\s{2,}/g, " "); // Replace multiple spaces with single space
 
   return markdown.trim();
 }
@@ -76,15 +76,16 @@ export function truncateDescription(text: string, maxLength: number = 150): stri
     return strippedText;
   }
   // Find the last space within the maxLength
-  const lastSpaceIndex = strippedText.lastIndexOf(' ', maxLength -1);
+  const lastSpaceIndex = strippedText.lastIndexOf(" ", maxLength - 1);
   // If no space found, just truncate (edge case)
-  let truncatedText = lastSpaceIndex > 0 ? strippedText.substring(0, lastSpaceIndex) : strippedText.substring(0, maxLength -1);
-  
+  const truncatedText =
+    lastSpaceIndex > 0 ? strippedText.substring(0, lastSpaceIndex) : strippedText.substring(0, maxLength - 1);
+
   // Check if the last character is a period and adjust the ellipsis accordingly
   if (truncatedText.endsWith(".")) {
-    return truncatedText + "..";
+    return `${truncatedText}..`;
   } else {
-    return truncatedText + "...";
+    return `${truncatedText}...`;
   }
 }
 
@@ -134,25 +135,25 @@ type ValidPost = {
  * @param {number} [limit] - An optional limit on the number of posts to return.
  * @returns {Promise<Array<ValidPost>>} A promise that resolves to an array of validated and sorted blog posts.
  */
-export async function getValidBlogPosts(limit?: number): Promise<Array<ValidPost>> {
+export async function getValidBlogPosts(limit?: number): Promise<ValidPost[]> {
   // Fetch blog posts from the 'blog' collection
   const allPostsRaw = await getCollection("blog");
 
   // Filter posts to ensure they have a valid publication date and map to the expected structure
   const validPosts = allPostsRaw
     .filter((post): post is CollectionEntry<"blog"> & { data: { date: Date } } => post.data.date instanceof Date) // Type guard for date
-    .filter(post => !(post.data.draft === true)) // Filter out drafts (include if false or undefined)
+    .filter((post) => !(post.data.draft === true)) // Filter out drafts (include if false or undefined)
     .map((post): ValidPost => {
       // Handle potential array/undefined author - adjust logic if needed based on actual schema
       let authorString = "Unknown Author";
       if (Array.isArray(post.data.author)) {
         authorString = post.data.author.join(", ");
-      } else if (typeof post.data.author === 'string' && post.data.author) {
+      } else if (typeof post.data.author === "string" && post.data.author) {
         authorString = post.data.author;
       }
 
       return {
-        slug: post.id.replace(/\.mdx?$/, ''), // Remove .md or .mdx extension
+        slug: post.id.replace(/\.mdx?$/, ""), // Remove .md or .mdx extension
         title: post.data.title ?? "Untitled Post", // Provide default
         description: post.data.description ?? "", // Provide default for description
         date: post.data.date, // Already validated by filter
