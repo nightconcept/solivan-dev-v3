@@ -35,7 +35,7 @@
     "@types/node": "^22.15.34",
     "husky": "^9.1.7",
     "jsdom": "^26.1.0",
-    "lint-staged": "^15.5.2",
+    "lint-staged": "^16.0.0",
     "tailwindcss-animate": "^1.0.7",
     "vitest": "^3.2.4",
     "vitest-dom": "^0.1.1"
