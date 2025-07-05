@@ -120,7 +120,7 @@ Ok, so now that we have our pillars let's *finally* look at the language.
 ## Boba Syntax
 
 ```boba
-print("Hello, World!")
+print(txt: "Hello, World!")
 ```
 
 KACHOW! That's it! Show's over! Just kidding. Here's much, much more!
@@ -245,8 +245,8 @@ impl PlayerInventory {
     /// Demonstrates the pipe operator `|>` for a clear data flow.
     pub fn print_report(self) {
         self.format_status_line()
-            |> self.add_header_and_footer()
-            |> print()
+            |> self.add_header_and_footer(input:)
+            |> print(txt:)
     }
 
     // Another private helper, demonstrating a function with a default parameter.
@@ -273,7 +273,7 @@ import { PlayerInventory, Item, ItemCategory } from "./inventory_manager.boba"
 #[test]
 fn test_new_inventory_is_empty() {
     let inventory = PlayerInventory.new(max_size: 5)
-    test.assert_eq(inventory.item_count(), 0)
+    test.assert_eq(left: inventory.item_count(), right: 0)
 }
 
 #[test]
@@ -283,15 +283,15 @@ fn test_add_item_succeeds() {
 
     // The `?` operator can be used in tests to unwrap a `Result`.
     // If add_item returns an `Err`, the test will panic and fail.
-    inventory.add_item(sword)?
+    inventory.add_item(item: sword)?
 
     test.assert_eq(inventory.item_count(), 1)
 
     // Using `??` to provide a default for an `Option`.
     let default_item = Item{ id: 0, name: "Fist", category: ItemCategory.WEAPON }
-    let retrieved = inventory.get_item(1) ?? default_item
+    let retrieved = inventory.get_item(idx: 1) ?? default_item
 
-    test.assert_eq(retrieved.name, "Steel Sword")
+    test.assert_eq(left: retrieved.name, right: "Steel Sword")
 }
 
 #[test]
@@ -305,7 +305,7 @@ fn test_add_item_fails_when_full() {
     // Use `match` to assert that we got the specific error we expected.
     match result {
         Ok(_) => panic("Adding to a full inventory should have failed!"),
-        Err(e) => test.assert_eq(e.code, "INVENTORY_FULL"),
+        Err(e) => test.assert_eq(left: e.code, right: "INVENTORY_FULL"),
     }
 }
 
@@ -315,7 +315,7 @@ fn test_private_format_status_line() {
     // We are directly calling a private method for focused unit testing.
     let inventory = PlayerInventory.new(max_size: 10)
     let status = inventory.format_status_line()
-    test.assert_eq(status, "Inventory Status: 0 / 10 items.")
+    test.assert_eq(left: status, right: "Inventory Status: 0 / 10 items.")
 }
 
 #[test]
@@ -325,7 +325,7 @@ fn test_accessing_non_existent_item_with_unwrap_panics() {
     // This demonstrates a common pattern that can cause panics.
     // .get_item() returns an Option. If we force-unwrap it when it's
     // None, the program will panic. This test verifies that behavior.
-    inventory.get_item(99).unwrap() // Assuming `unwrap` is a standard library method that panics on None
+    inventory.get_item(idx: 99).unwrap() // Assuming `unwrap` is a standard library method that panics on None
 }
 
 

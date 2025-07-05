@@ -7,19 +7,13 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": ["src/**/*.astro", "src/**/*.{js,jsx,ts,tsx}", "src/**/*.{md,mdx}", "!node_modules/**", "!**/*.min.js"]
+    "include": ["src/**/*.astro", "src/**/*.{js,jsx,ts,tsx}", "src/**/*.{md,mdx}"],
+    "ignore": ["biome.json", "node_modules/**", "**/*.min.js"]
   },
   "formatter": {
     "enabled": true,
     "lineWidth": 120,
     "indentStyle": "space"
-  },
-  "assist": {
-    "actions": {
-      "source": {
-        "organizeImports": "on"
-      }
-    }
   },
   "linter": {
     "enabled": true,
@@ -51,7 +45,7 @@
   },
   "overrides": [
     {
-      "includes": ["**/*.astro"],
+      "include": ["**/*.astro"],
       "linter": {
         "rules": {
           "correctness": {
@@ -62,7 +56,7 @@
       }
     },
     {
-      "includes": ["package.json"],
+      "include": ["package.json"],
       "formatter": {
         "lineWidth": 1
       }

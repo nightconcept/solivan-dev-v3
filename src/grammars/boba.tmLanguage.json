@@ -84,7 +84,7 @@
       "patterns": [
         {
           "name": "string",
-          "match": "\\b(User|error|Permissions|FullProfile)\\b"
+          "match": "\\b(error|Permissions|FullProfile)\\b"
         }
       ]
     },
@@ -107,7 +107,7 @@
           "match": "\\b(false)\\b"
         },
         {
-          "name": "constant.language.option",
+          "name": "entity.name.function",
           "match": "\\b(Some|None)\\b"
         },
         {
@@ -119,27 +119,61 @@
     "entities": {
       "patterns": [
         {
-          "begin": "\\b(fn|private fn|pub fn)\\s+([a-zA-Z_][a-zA-Z0-9_]*)(\\()",
+          "begin": "\\b(fn|private fn|pub fn)\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
           "beginCaptures": {
             "1": {
               "name": "storage.type.function"
             },
             "2": {
               "name": "entity.name.function"
-            },
-            "3": {
-              "name": "punctuation.definition.parameters.begin"
             }
           },
-          "end": "(\\))",
-          "endCaptures": {
-            "1": {
-              "name": "punctuation.definition.parameters.end"
-            }
-          },
+          "end": "(?<=\\})",
           "patterns": [
             {
-              "include": "#parameters"
+              "begin": "\\(",
+              "end": "\\)",
+              "beginCaptures": {
+                "0": {
+                  "name": "punctuation.definition.parameters.begin"
+                }
+              },
+              "endCaptures": {
+                "0": {
+                  "name": "punctuation.definition.parameters.end"
+                }
+              },
+              "patterns": [
+                {
+                  "include": "#parameters"
+                }
+              ]
+            },
+            {
+              "begin": "\\{",
+              "end": "\\}",
+              "name": "meta.function.body",
+              "beginCaptures": {
+                "0": {
+                  "name": "punctuation.section.function.begin"
+                }
+              },
+              "endCaptures": {
+                "0": {
+                  "name": "punctuation.section.function.end"
+                }
+              },
+              "patterns": [
+                {
+                  "include": "$self"
+                }
+              ]
+            },
+            {
+              "include": "#return-types"
+            },
+            {
+              "include": "#comments"
             }
           ]
         },
@@ -175,7 +209,7 @@
           ]
         },
         {
-          "begin": "\\b(class)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(extends)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*(=)\\s*({)",
+          "begin": "\\b(class)\\s+([a-zA-Z_][a-zA-Z0-9_]*)(?:\\s+(extends)\\s+([a-zA-Z_][a-zA-Z0-9_]*))?\\s*(=)?\\s*({)",
           "beginCaptures": {
             "1": {
               "name": "storage.type.class"
@@ -209,66 +243,7 @@
           ]
         },
         {
-          "begin": "\\b(class)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(extends)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*({)",
-          "beginCaptures": {
-            "1": {
-              "name": "storage.type.class"
-            },
-            "2": {
-              "name": "entity.name.class"
-            },
-            "3": {
-              "name": "storage.type"
-            },
-            "4": {
-              "name": "entity.other.inherited-class"
-            },
-            "5": {
-              "name": "meta.brace.curly"
-            }
-          },
-          "end": "(})",
-          "endCaptures": {
-            "1": {
-              "name": "meta.brace.curly"
-            }
-          },
-          "patterns": [
-            {
-              "include": "$self"
-            }
-          ]
-        },
-        {
-          "begin": "\\b(class)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*(=)\\s*({)",
-          "beginCaptures": {
-            "1": {
-              "name": "storage.type.class"
-            },
-            "2": {
-              "name": "entity.name.class"
-            },
-            "3": {
-              "name": "keyword.operator.assignment"
-            },
-            "4": {
-              "name": "meta.brace.curly"
-            }
-          },
-          "end": "(})",
-          "endCaptures": {
-            "1": {
-              "name": "meta.brace.curly"
-            }
-          },
-          "patterns": [
-            {
-              "include": "$self"
-            }
-          ]
-        },
-        {
-          "begin": "\\b(class)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*({)",
+          "begin": "\\b(impl)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*({)",
           "beginCaptures": {
             "1": {
               "name": "storage.type.class"
@@ -295,24 +270,28 @@
       ]
     },
     "table-literals": {
-      "begin": "{",
-      "end": "}",
-      "beginCaptures": {
-        "0": {
-          "name": "meta.brace.curly"
-        }
-      },
-      "endCaptures": {
-        "0": {
-          "name": "meta.brace.curly"
-        }
-      },
       "patterns": [
         {
-          "include": "#table-keys"
-        },
-        {
-          "include": "$self"
+          "begin": "(?<=(=|return|\\(|,)\\s*)(\\{)",
+          "beginCaptures": {
+            "2": {
+              "name": "meta.brace.curly"
+            }
+          },
+          "end": "(\\})",
+          "endCaptures": {
+            "1": {
+              "name": "meta.brace.curly"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#table-keys"
+            },
+            {
+              "include": "$self"
+            }
+          ]
         }
       ]
     },
@@ -370,7 +349,7 @@
       "patterns": [
         {
           "name": "storage.type",
-          "match": "\\b(let|var|const|fn|class|extends|private|pub|enum|struct|match|where|async|await|impl)\\b"
+          "match": "\\b(let|var|const|fn|class|extends|private|pub|enum|struct|match|where|async|await|impl|mut)\\b"
         }
       ]
     },
@@ -434,10 +413,17 @@
           "include": "#function-calls"
         },
         {
+          "include": "#self-keyword"
+        },
+        {
           "include": "#properties"
         },
         {
-          "name": "variable.parameter",
+          "name": "variable.other.constant",
+          "match": "\\b[A-Z0-9]+(?:_[A-Z0-9]+)+\\b"
+        },
+        {
+          "name": "variable.other.readwrite",
           "match": "[a-zA-Z_][a-zA-Z0-9_]*"
         },
         {
@@ -494,13 +480,39 @@
     "function-calls": {
       "patterns": [
         {
-          "match": "(?<!\\.)\\b([a-zA-Z_][a-zA-Z0-9_]*)(?=\\()",
-          "name": "entity.name.function"
+          "begin": "(?<![\\.])\\b([a-zA-Z_][a-zA-Z0-9_]*)(?=\\()(\\()",
+          "beginCaptures": {
+            "1": {
+              "name": "entity.name.function"
+            },
+            "2": {
+              "name": "meta.brace.round"
+            }
+          },
+          "end": "\\)",
+          "endCaptures": {
+            "0": {
+              "name": "meta.brace.round"
+            }
+          },
+          "name": "meta.function-call",
+          "patterns": [
+            {
+              "include": "#argument-names"
+            },
+            {
+              "include": "#function-call-body"
+            }
+          ]
         }
       ]
     },
     "variables": {
       "patterns": [
+        {
+          "name": "variable.other.constant",
+          "match": "\\b[A-Z0-9]+(?:_[A-Z0-9]+)+\\b"
+        },
         {
           "name": "variable.other.constant",
           "match": "(?<=\\bconst\\s)([a-zA-Z_][a-zA-Z0-9_]*)"
@@ -512,33 +524,72 @@
               "name": "entity.name.class"
             }
           }
+        },
+        {
+          "name": "variable.other.readwrite",
+          "match": "(?<=\\.)([a-zA-Z_][a-zA-Z0-9_]*)"
         }
       ]
     },
     "properties": {
       "patterns": [
         {
-          "name": "entity.name.function",
-          "match": "(?<=\\.)([a-zA-Z_][a-zA-Z0-9_]*)(?=\\()"
+          "begin": "(\\.)([a-zA-Z_][a-zA-Z0-9_]*)(?=\\()(\\()",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.accessor"
+            },
+            "2": {
+              "name": "entity.name.function"
+            },
+            "3": {
+              "name": "meta.brace.round"
+            }
+          },
+          "end": "\\)",
+          "endCaptures": {
+            "0": {
+              "name": "meta.brace.round"
+            }
+          },
+          "name": "meta.function-call.method",
+          "patterns": [
+            {
+              "include": "#argument-names"
+            },
+            {
+              "include": "#function-call-body"
+            }
+          ]
         },
         {
-          "name": "source",
-          "match": "(?<=\\bself\\.)([a-zA-Z_][a-zA-Z0-9_]*)"
+          "match": "(\\.)([A-Z0-9]+(?:_[A-Z0-9]+)+)\\b",
+          "captures": {
+            "1": {
+              "name": "punctuation.accessor"
+            },
+            "2": {
+              "name": "variable.other.constant"
+            }
+          }
         },
         {
-          "name": "entity.name.function",
-          "match": "(?<=\\.)([A-Z_][A-Z0-9_]*)\\b"
-        },
-        {
-          "name": "keyword.operator.new",
-          "match": "(?<=\\.)([a-zA-Z_][a-zA-Z0-9_]*)"
+          "match": "(\\.)([a-zA-Z_][a-zA-Z0-9_]*)",
+          "captures": {
+            "1": {
+              "name": "punctuation.accessor"
+            },
+            "2": {
+              "name": "variable.other.readwrite"
+            }
+          }
         }
       ]
     },
     "table-keys": {
       "patterns": [
         {
-          "name": "storage.type",
+          "name": "variable.other.readwrite",
           "match": "([a-zA-Z_][a-zA-Z0-9_]*)(?=\\s*:)"
         }
       ]
@@ -546,7 +597,7 @@
     "self-keyword": {
       "patterns": [
         {
-          "name": "entity.name.function",
+          "name": "variable.language",
           "match": "\\b(self)\\b"
         }
       ]
@@ -570,9 +621,6 @@
           "include": "#generics"
         },
         {
-          "include": "#string-as-yellow"
-        },
-        {
           "include": "#custom-types"
         },
         {
@@ -585,6 +633,13 @@
     },
     "parameters": {
       "patterns": [
+        {
+          "include": "#storage"
+        },
+        {
+          "name": "variable.parameter",
+          "match": "\\b(self)\\b"
+        },
         {
           "name": "variable.parameter",
           "match": "([a-zA-Z_][a-zA-Z0-9_]*)(?=\\s*:)"
@@ -638,13 +693,56 @@
           "include": "#return-type-generics"
         },
         {
-          "include": "#string-as-yellow"
+          "include": "#constants"
+        },
+        {
+          "include": "#punctuation"
+        }
+      ]
+    },
+    "argument-names": {
+      "patterns": [
+        {
+          "name": "variable.parameter",
+          "match": "([a-zA-Z_][a-zA-Z0-9_]*)(?=\\s*:)"
+        }
+      ]
+    },
+    "function-call-body": {
+      "patterns": [
+        {
+          "include": "#strings"
+        },
+        {
+          "include": "#numbers"
         },
         {
           "include": "#constants"
         },
         {
+          "include": "#operators"
+        },
+        {
           "include": "#punctuation"
+        },
+        {
+          "include": "#argument-names"
+        },
+        {
+          "include": "#function-calls"
+        },
+        {
+          "include": "#properties"
+        },
+        {
+          "include": "#self-keyword"
+        },
+        {
+          "include": "#variables"
+        },
+        {
+          "name": "variable.other.readwrite",
+          "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b"
         }
       ]
     }
