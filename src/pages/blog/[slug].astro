@@ -3,6 +3,8 @@ import { type CollectionEntry, getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumb from "../../components/Breadcrumb.astro";
 import { SITE_TITLE } from "../../consts";
+import FormattedDate from "../../components/FormattedDate.astro";
+import { calculateReadTime } from "../../lib/utils";
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog");
@@ -27,6 +29,7 @@ if (entry.data.draft) {
 
 const { slug } = Astro.params;
 const { Content, headings } = await entry.render();
+const readTime = calculateReadTime(entry.body);
 
 const breadcrumbItems = [
   { label: "Home", href: "/" },
@@ -37,7 +40,12 @@ const breadcrumbItems = [
 <BaseLayout title={`${entry.data.title} | ${SITE_TITLE}`} description={entry.data.description || entry.data.title} headings={headings}>
   <Breadcrumb items={breadcrumbItems} />
   <article class="relative mt-8">
-    <h1 class="mb-8 text-3xl font-bold">{entry.data.title}</h1>
+    <h1 class="mb-2 text-3xl font-bold">{entry.data.title}</h1>
+    <div class="mb-6 flex items-center text-sm text-gray-500 dark:text-gray-400">
+      <FormattedDate date={entry.data.date} />
+      <span class="mx-2" aria-hidden="true">&bull;</span>
+      <span>{readTime}</span>
+    </div>
     <div class="prose dark:prose-invert lg:prose-lg prose-headings:scroll-mt-20 prose-headings:relative prose-headings:group prose-a:text-primary hover:prose-a:text-primary/80 max-w-none">
       <Content />
     </div>
