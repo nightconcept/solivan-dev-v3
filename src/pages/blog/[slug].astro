@@ -2,6 +2,7 @@
 import { type CollectionEntry, getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumb from "../../components/Breadcrumb.astro";
+import Webmentions from "../../components/Webmentions.astro";
 import { SITE_TITLE } from "../../consts";
 import FormattedDate from "../../components/FormattedDate.astro";
 import { calculateReadTime } from "../../lib/utils";
@@ -50,4 +51,13 @@ const breadcrumbItems = [
       <Content />
     </div>
   </article>
+
+  {/* Show Webmentions component only if comments are enabled for this post */}
+  {entry.data.comments && (
+    <Webmentions
+      targetUrl={Astro.url.href}
+      blueskyUrl={entry.data.syndicationUrls?.find(url => url.includes('bsky.app'))}
+      mastodonUrl={entry.data.syndicationUrls?.find(url => url.includes('mastodon'))}
+    />
+  )}
 </BaseLayout>

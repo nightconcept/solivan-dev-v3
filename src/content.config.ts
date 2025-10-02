@@ -27,6 +27,10 @@ const blog = defineCollection({
       })
       .optional(),
     heroImage: z.string().optional(),
+    // Syndication fields for social media
+    syndicationUrls: z.array(z.string()).optional(),
+    blueskyPostId: z.string().optional(),
+    mastodonPostId: z.string().optional(),
   }),
 });
 
