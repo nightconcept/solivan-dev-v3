@@ -12,7 +12,7 @@ const blog = defineCollection({
     weight: z.number().nullable().optional(),
     slug: z.string().optional(),
     draft: z.boolean().default(false),
-    comments: z.boolean().optional().default(true),
+    comments: z.boolean().optional().default(false),
     showToc: z.boolean().optional().default(true),
     TocOpen: z.boolean().optional().default(false),
     hidemeta: z.boolean().optional().default(false),

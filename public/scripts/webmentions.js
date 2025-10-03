@@ -16,8 +16,7 @@
     RATE_LIMIT_DURATION: 60 * 1000, // 1 minute per URL
     MAX_CACHE_AGE: 7 * 24 * 60 * 60 * 1000, // 7 days
     WEBMENTION_API: 'https://webmention.io/api/mentions.jf2',
-    // TODO: Replace with your actual domain after registration
-    DOMAIN: 'YOUR-DOMAIN'
+    DOMAIN: 'solivan.dev'
   };
 
   // Cache utilities
@@ -236,99 +235,80 @@
 
   // Render webmentions
   function renderWebmentions(mentions, container) {
-    const { likes, reposts, replies } = mentions;
+    const { likes, reposts, replies, mentions: generalMentions } = mentions;
+
+    // Combine all mentions for unified display
+    const allMentions = [
+      ...likes.map(m => ({ ...m, type: 'like' })),
+      ...reposts.map(m => ({ ...m, type: 'repost' })),
+      ...replies.map(m => ({ ...m, type: 'reply' })),
+      ...generalMentions.map(m => ({ ...m, type: 'mention' }))
+    ];
+
+    // Sort by date (newest first)
+    allMentions.sort((a, b) => {
+      const dateA = new Date(a.published || a['wm-received']);
+      const dateB = new Date(b.published || b['wm-received']);
+      return dateB - dateA;
+    });
 
     // Update stats
     const statsContainer = container.querySelector('.webmentions-stats');
     if (statsContainer) {
+      const likeCount = likes.length;
+      const commentCount = replies.length + generalMentions.length + reposts.length;
+
       statsContainer.innerHTML = `
-        ${likes.length > 0 ? `<span class="likes-count">${likes.length} ${likes.length === 1 ? 'like' : 'likes'}</span>` : ''}
-        ${reposts.length > 0 ? `<span class="reposts-count">${reposts.length} ${reposts.length === 1 ? 'repost' : 'reposts'}</span>` : ''}
-        ${replies.length > 0 ? `<span class="replies-count">${replies.length} ${replies.length === 1 ? 'reply' : 'replies'}</span>` : ''}
+        <span class="likes-count">❤️ ${likeCount}</span>
+        <span class="replies-count ml-4">💬 ${commentCount}</span>
       `;
     }
 
-    // Render likes
-    const likesContainer = container.querySelector('.likes-container');
-    if (likesContainer && likes.length > 0) {
-      likesContainer.innerHTML = `
-        <div class="flex flex-wrap gap-2">
-          ${likes.map(like => `
-            <a href="${like.author?.url || like.url}"
-               target="_blank"
-               rel="noopener noreferrer"
-               title="${like.author?.name || 'Someone'} liked this">
-              <img src="${like.author?.photo || '/default-avatar.png'}"
-                   alt="${like.author?.name || 'Avatar'}"
-                   class="webmention-avatar w-8 h-8 rounded-full"
+    // Render all mentions
+    const listContainer = container.querySelector('.webmentions-list');
+    if (listContainer) {
+      if (allMentions.length === 0) {
+        listContainer.innerHTML = '<p class="text-muted-foreground text-sm">No mentions yet. Be the first to engage!</p>';
+      } else {
+        listContainer.innerHTML = allMentions.map(mention => {
+          const mentionType = mention.type;
+          const authorName = mention.author?.name || 'Anonymous';
+          const authorUrl = mention.author?.url || mention.url;
+          const authorPhoto = mention.author?.photo || '/default-avatar.png';
+          const date = formatDate(mention.published || mention['wm-received']);
+          const content = mention.content?.html || mention.content?.text || '';
+
+          let actionText = 'mentioned this';
+          if (mentionType === 'like') actionText = 'liked this';
+          if (mentionType === 'repost') actionText = 'reposted this';
+          if (mentionType === 'reply') actionText = 'replied';
+
+          return `
+            <div class="webmention-item">
+              <img src="${authorPhoto}"
+                   alt="${authorName}"
+                   class="webmention-avatar"
                    loading="lazy">
-            </a>
-          `).join('')}
-        </div>
-      `;
-    }
-
-    // Render reposts
-    const repostsContainer = container.querySelector('.reposts-container');
-    if (repostsContainer && reposts.length > 0) {
-      repostsContainer.innerHTML = `
-        <div class="flex flex-wrap gap-2">
-          ${reposts.map(repost => `
-            <a href="${repost.author?.url || repost.url}"
-               target="_blank"
-               rel="noopener noreferrer"
-               title="${repost.author?.name || 'Someone'} reposted this">
-              <img src="${repost.author?.photo || '/default-avatar.png'}"
-                   alt="${repost.author?.name || 'Avatar'}"
-                   class="webmention-avatar w-8 h-8 rounded-full opacity-75"
-                   loading="lazy">
-            </a>
-          `).join('')}
-        </div>
-      `;
-    }
-
-    // Render replies
-    const repliesContainer = container.querySelector('.webmentions-replies');
-    if (repliesContainer && replies.length > 0) {
-      repliesContainer.innerHTML = replies.map(reply => {
-        const platform = detectPlatform(reply.url);
-        const content = reply.content?.html || reply.content?.text || '';
-
-        return `
-          <div class="webmention-reply">
-            <img src="${reply.author?.photo || '/default-avatar.png'}"
-                 alt="${reply.author?.name || 'Avatar'}"
-                 class="webmention-avatar"
-                 loading="lazy">
-            <div class="webmention-content">
-              <div class="webmention-author">
-                <a href="${reply.author?.url || reply.url}"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   class="webmention-author-name">
-                  ${reply.author?.name || 'Anonymous'}
-                </a>
-                <span class="platform-badge platform-${platform}">${platform}</span>
-              </div>
-              <time class="webmention-date" datetime="${reply.published || reply['wm-received']}">
-                ${formatDate(reply.published || reply['wm-received'])}
-              </time>
-              <div class="webmention-text">
-                ${content ? sanitizeHTML(content) : '<em>No content</em>'}
+              <div class="webmention-content">
+                <div class="webmention-meta">
+                  <a href="${authorUrl}"
+                     target="_blank"
+                     rel="noopener noreferrer"
+                     class="webmention-author">
+                    ${authorName}
+                  </a>
+                  ${actionText} on ${date}
+                </div>
+                ${content && mentionType !== 'like' ? `
+                  <div class="webmention-text">
+                    ${sanitizeHTML(content)}
+                  </div>
+                ` : ''}
               </div>
             </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    // Show/hide containers based on content
-    if (likes.length === 0 && reposts.length === 0 && replies.length === 0) {
-      const noComments = document.createElement('p');
-      noComments.className = 'text-muted-foreground';
-      noComments.textContent = 'No comments yet. Be the first to reply!';
-      container.querySelector('.webmentions-container').appendChild(noComments);
+          `;
+        }).join('');
+      }
     }
   }
 

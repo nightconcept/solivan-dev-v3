@@ -40,14 +40,6 @@ const hasMorePosts = publishedPosts.length > 0 && showSeeMore;
             <FormattedDate date={post.date} />
             <span class="mx-2">•</span>
             <span>{calculateReadTime(post.body ?? '')}</span>
-            {post.author && (
-              <>
-                <span class="mx-2">•</span>
-                <span>
-                  By {post.author}
-                </span>
-              </>
-            )}
           </div>
         </a>
       </article>

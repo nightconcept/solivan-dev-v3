@@ -11,7 +11,6 @@ description: ''
 weight: # 1 means pin the article, sort articles according to this number
 slug: ''
 draft: true # draft or not
-comments: true
 showToc: true # show contents
 TocOpen: true # open contents automantically
 hidemeta: false # hide information (author, create date, etc.)

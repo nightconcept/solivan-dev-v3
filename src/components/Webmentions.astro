@@ -10,21 +10,37 @@ const pageUrl = targetUrl || Astro.url.href;
 ---
 
 <section class="webmentions mt-12 border-t pt-8" data-target-url={pageUrl}>
-  <h2 class="text-2xl font-bold mb-6">Comments & Reactions</h2>
+  <h2 class="text-xl font-bold mb-4">Webmentions</h2>
 
-  {/* Call to action for replies */}
-  {(blueskyUrl || mastodonUrl) && (
-    <div class="reply-cta mb-6 p-4 bg-muted/10 rounded-lg">
-      <p class="text-sm mb-3">Reply on your favorite platform:</p>
-      <div class="flex gap-4">
+  {/* Loading state */}
+  <div class="webmentions-loading">
+    <p class="text-muted-foreground text-sm">Loading...</p>
+  </div>
+
+  {/* Error state (hidden by default) */}
+  <div class="webmentions-error hidden">
+    <p class="text-red-500 text-sm">Failed to load comments.</p>
+  </div>
+
+  {/* Comments container */}
+  <div class="webmentions-container hidden">
+    {/* Stats with emoji counters */}
+    <div class="webmentions-stats mb-4 text-sm text-muted-foreground">
+      <span class="likes-count">❤️ 0</span>
+      <span class="replies-count ml-4">💬 0</span>
+    </div>
+
+    {/* Clean reply buttons */}
+    {(blueskyUrl || mastodonUrl) && (
+      <div class="reply-buttons mb-6 flex gap-3">
         {blueskyUrl && (
           <a
             href={blueskyUrl}
             target="_blank"
             rel="noopener noreferrer"
-            class="inline-flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors"
+            class="reply-button reply-button-bluesky"
           >
-            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+            <svg class="reply-icon" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 10.8c-1.087-2.114-4.046-6.053-6.798-7.995C2.566.944 1.561 1.266.902 1.565.139 1.908 0 3.08 0 3.768c0 .69.378 5.65.624 6.479.815 2.736 3.713 3.66 6.383 3.364.136-.02.275-.039.415-.056-.138.022-.276.04-.415.056-3.912.58-7.387 2.005-2.83 7.078 5.013 5.19 6.87-1.113 7.823-4.308.953 3.195 2.05 9.271 7.733 4.308 4.267-4.308 1.172-6.498-2.74-7.078a8.741 8.741 0 0 1-.415-.056c.14.017.279.036.415.056 2.67.297 5.568-.628 6.383-3.364.246-.828.624-5.79.624-6.478 0-.69-.139-1.861-.902-2.206-.659-.298-1.664-.62-4.3 1.24C16.046 4.748 13.087 8.687 12 10.8Z" />
             </svg>
             Reply on Bluesky
@@ -35,45 +51,19 @@ const pageUrl = targetUrl || Astro.url.href;
             href={mastodonUrl}
             target="_blank"
             rel="noopener noreferrer"
-            class="inline-flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors"
+            class="reply-button reply-button-mastodon"
           >
-            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+            <svg class="reply-icon" viewBox="0 0 24 24" fill="currentColor">
               <path d="M23.268 5.313c-.35-2.578-2.617-4.61-5.304-5.004C17.51.242 15.792 0 11.813 0h-.03c-3.98 0-4.835.242-5.288.309C3.882.692 1.496 2.518.917 5.127.64 6.412.61 7.837.661 9.143c.074 1.874.088 3.745.26 5.611.118 1.24.325 2.47.62 3.68.55 2.237 2.777 4.098 4.96 4.857 2.336.792 4.849.923 7.256.38.265-.061.527-.132.786-.213.585-.184 1.27-.39 1.774-.753a.057.057 0 0 0 .023-.043v-1.809a.052.052 0 0 0-.02-.041.053.053 0 0 0-.046-.01 20.282 20.282 0 0 1-4.709.545c-2.73 0-3.463-1.284-3.674-1.818a5.593 5.593 0 0 1-.319-1.433.053.053 0 0 1 .066-.054c1.517.363 3.072.546 4.632.546.376 0 .75 0 1.125-.01 1.57-.044 3.224-.124 4.768-.422.038-.008.077-.015.11-.024 2.435-.464 4.753-1.92 4.989-5.604.008-.145.03-1.52.03-1.67.002-.512.167-3.63-.024-5.545zm-3.748 9.195h-2.561V8.29c0-1.309-.55-1.976-1.67-1.976-1.23 0-1.846.79-1.846 2.35v3.403h-2.546V8.663c0-1.56-.617-2.35-1.848-2.35-1.112 0-1.668.668-1.67 1.977v6.218H4.822V8.102c0-1.31.337-2.35 1.011-3.12.696-.77 1.608-1.164 2.74-1.164 1.311 0 2.302.5 2.962 1.498l.638 1.06.638-1.06c.66-.999 1.65-1.498 2.96-1.498 1.13 0 2.043.395 2.74 1.164.675.77 1.012 1.81 1.012 3.12z" />
             </svg>
             Reply on Mastodon
           </a>
         )}
       </div>
-    </div>
-  )}
+    )}
 
-  {/* Loading state */}
-  <div class="webmentions-loading">
-    <p class="text-muted-foreground">Loading comments...</p>
-  </div>
-
-  {/* Error state (hidden by default) */}
-  <div class="webmentions-error hidden">
-    <p class="text-red-500">Failed to load comments. Please try refreshing the page.</p>
-  </div>
-
-  {/* Comments container */}
-  <div class="webmentions-container hidden">
-    {/* Stats */}
-    <div class="webmentions-stats mb-6 flex gap-6 text-sm text-muted-foreground">
-      <span class="likes-count"></span>
-      <span class="reposts-count"></span>
-      <span class="replies-count"></span>
-    </div>
-
-    {/* Likes & Reposts */}
-    <div class="webmentions-interactions mb-8">
-      <div class="likes-container mb-4"></div>
-      <div class="reposts-container"></div>
-    </div>
-
-    {/* Comments/Replies */}
-    <div class="webmentions-replies space-y-4"></div>
+    {/* All mentions */}
+    <div class="webmentions-list space-y-3"></div>
   </div>
 </section>
 
@@ -94,49 +84,115 @@ const pageUrl = targetUrl || Astro.url.href;
   }
 
   .webmention-avatar {
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
     border-radius: 9999px;
+    flex-shrink: 0;
   }
 
-  .webmention-reply {
+  .webmention-item {
     display: flex;
     gap: 0.75rem;
-    padding: 1rem;
-    background: rgba(var(--muted), 0.1);
-    border-radius: 0.5rem;
+    align-items: flex-start;
+    padding: 0.75rem 0;
   }
 
   .webmention-content {
     flex: 1;
+    min-width: 0;
   }
 
   .webmention-author {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .webmention-author-name {
     font-weight: 600;
+    color: var(--foreground);
+    text-decoration: none;
   }
 
-  .webmention-date {
+  .webmention-author:hover {
+    text-decoration: underline;
+  }
+
+  .webmention-meta {
     font-size: 0.875rem;
     color: var(--muted-foreground);
+    margin-bottom: 0.25rem;
   }
 
   .webmention-text {
-    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--foreground);
+    margin-left: 1rem;
+    word-wrap: break-word;
   }
 
-  .platform-badge {
-    font-size: 0.75rem;
-    padding: 0.125rem 0.375rem;
-    background: rgba(var(--primary), 0.1);
-    color: var(--primary);
-    border-radius: 9999px;
-    margin-left: 0.5rem;
+  .webmention-text p {
+    margin: 0.5rem 0;
+  }
+
+  .webmention-text p:first-child {
+    margin-top: 0;
+  }
+
+  .webmention-text p:last-child {
+    margin-bottom: 0;
+  }
+
+  .reply-buttons {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .reply-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: 1px solid;
+  }
+
+  .reply-icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+
+  .reply-button-bluesky {
+    color: #0085ff;
+    border-color: #0085ff;
+    background: rgba(0, 133, 255, 0.1);
+  }
+
+  .reply-button-bluesky:hover {
+    background: rgba(0, 133, 255, 0.2);
+    transform: translateY(-1px);
+  }
+
+  .reply-button-mastodon {
+    color: #6364ff;
+    border-color: #6364ff;
+    background: rgba(99, 100, 255, 0.1);
+  }
+
+  .reply-button-mastodon:hover {
+    background: rgba(99, 100, 255, 0.2);
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 640px) {
+    .reply-buttons {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .reply-button {
+      justify-content: center;
+    }
   }
 </style>

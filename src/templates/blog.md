@@ -9,8 +9,9 @@ tags:
   - lessons learned
 description: ''
 weight: 
-slug: 
+slug:
 draft: false
+comments: true
 cover:
   image: ''
   caption: ''
